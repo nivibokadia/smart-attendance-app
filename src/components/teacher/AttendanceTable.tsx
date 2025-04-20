@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Attendance } from '@/types';
 import { Card } from '@/components/ui/card';
@@ -7,9 +6,14 @@ import { exportToExcel } from '@/utils/excelExport';
 interface AttendanceTableProps {
   attendanceData: Attendance[];
   onExport: (data: Attendance[]) => void;
+  isLoading?: boolean;
 }
 
-const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendanceData, onExport }) => {
+const AttendanceTable: React.FC<AttendanceTableProps> = ({ 
+  attendanceData, 
+  onExport,
+  isLoading = false
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -25,6 +29,21 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendanceData, onExp
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Card className="attendify-card">

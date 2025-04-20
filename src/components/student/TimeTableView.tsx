@@ -1,115 +1,84 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { LectureData } from '@/types';
-import { Card } from '@/components/ui/card';
 import TimetableCell from './TimetableCell';
-import { getFilteredLectures, DIVISIONS, YEARS } from '@/utils/mockData';
 
-interface TimeTableViewProps {
-  selectedLectures: LectureData[];
-  onSelectLecture: (lecture: LectureData) => void;
-}
-
-const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const TIME_SLOTS = [
-  '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',
-  '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM'
+  '9:00 AM - 10:00 AM',
+  '10:00 AM - 11:00 AM',
+  '11:00 AM - 12:00 PM',
+  '12:00 PM - 1:00 PM',
+  '1:00 PM - 2:00 PM',
+  '2:00 PM - 3:00 PM',
+  '3:00 PM - 4:00 PM',
+  '4:00 PM - 5:00 PM',
 ];
 
-const TimeTableView: React.FC<TimeTableViewProps> = ({ selectedLectures, onSelectLecture }) => {
-  const [division, setDivision] = useState<string>('');
-  const [year, setYear] = useState<string>('');
-  const [lectures, setLectures] = useState<LectureData[]>([]);
+interface TimeTableViewProps {
+  lectures: LectureData[];
+  selectedLectures: LectureData[];
+  onLectureSelect: (lecture: LectureData) => void;
+}
 
-  useEffect(() => {
-    setLectures(getFilteredLectures(division, year));
-  }, [division, year]);
-
-  const getLectureForSlot = (day: string, timeSlot: string): LectureData | undefined => {
-    return lectures.find(lecture => {
-      const [startTime] = lecture.time.split(' - ');
-      return startTime === timeSlot;
-    });
-  };
-
-  const isLectureSelected = (lecture: LectureData) => {
-    return selectedLectures.some(l => l.id === lecture.id);
+const TimeTableView: React.FC<TimeTableViewProps> = ({
+  lectures,
+  selectedLectures,
+  onLectureSelect,
+}) => {
+  const getLecturesForTimeAndDay = (time: string, day: string) => {
+    return lectures.filter(
+      (lecture) => lecture.time === time && lecture.day === day
+    );
   };
 
   return (
-    <Card className="attendify-card mt-8">
-      <h2 className="text-xl font-bold mb-6 text-center">Timetable View</h2>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <div>
-          <label htmlFor="division" className="attendify-label">Division</label>
-          <select 
-            id="division" 
-            className="attendify-select"
-            value={division}
-            onChange={(e) => setDivision(e.target.value)}
-          >
-            <option value="">Select Division</option>
-            {DIVISIONS.map((div) => (
-              <option key={div} value={div}>Division {div}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div>
-          <label htmlFor="year" className="attendify-label">Year</label>
-          <select 
-            id="year" 
-            className="attendify-select"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-          >
-            <option value="">Select Year</option>
-            {YEARS.map((yr) => (
-              <option key={yr} value={yr}>{yr}</option>
-            ))}
-          </select>
+    <div className="overflow-x-auto bg-white rounded-lg shadow-sm">
+      <div className="min-w-[900px] lg:min-w-full">
+        <div className="grid grid-cols-[100px_repeat(5,1fr)]">
+          {/* Header Row */}
+          <div className="h-16 flex items-center justify-center font-medium text-gray-500 border-b bg-gray-50">
+            Time
+          </div>
+          {DAYS_OF_WEEK.map((day) => (
+            <div
+              key={day}
+              className="h-16 flex items-center justify-center font-semibold text-gray-700 border-b bg-gray-50"
+            >
+              {day}
+            </div>
+          ))}
+
+          {/* Time Slots */}
+          {TIME_SLOTS.map((timeSlot) => (
+            <React.Fragment key={timeSlot}>
+              <div className="h-28 flex items-center justify-center text-sm font-medium text-gray-600 border-b px-2 bg-gray-50">
+                {timeSlot}
+              </div>
+              {DAYS_OF_WEEK.map((day) => {
+                const lecturesInSlot = getLecturesForTimeAndDay(timeSlot, day);
+                return (
+                  <div
+                    key={`${day}-${timeSlot}`}
+                    className="h-28 border-b border-l p-1.5 hover:bg-gray-50 transition-colors duration-150"
+                  >
+                    {lecturesInSlot.map((lecture) => (
+                      <TimetableCell
+                        key={lecture.id}
+                        lecture={lecture}
+                        isSelected={selectedLectures.some(
+                          (selected) => selected.id === lecture.id
+                        )}
+                        onClick={() => onLectureSelect(lecture)}
+                      />
+                    ))}
+                  </div>
+                );
+              })}
+            </React.Fragment>
+          ))}
         </div>
       </div>
-
-      {division && year ? (
-        <div className="overflow-x-auto">
-          <div className="min-w-[800px]">
-            <div className="grid grid-cols-[100px_repeat(7,1fr)]">
-              <div className="font-medium p-2 bg-gray-100 border border-gray-200">Time</div>
-              {DAYS_OF_WEEK.map(day => (
-                <div key={day} className="font-medium p-2 bg-gray-100 border border-gray-200">
-                  {day}
-                </div>
-              ))}
-
-              {TIME_SLOTS.map(timeSlot => (
-                <React.Fragment key={timeSlot}>
-                  <div className="p-2 border border-gray-200 font-medium">{timeSlot}</div>
-                  {DAYS_OF_WEEK.map(day => (
-                    <div key={`${day}-${timeSlot}`} className="h-16 border border-gray-200">
-                      {(() => {
-                        const lecture = getLectureForSlot(day, timeSlot);
-                        return (
-                          <TimetableCell
-                            lecture={lecture}
-                            isSelected={lecture ? isLectureSelected(lecture) : false}
-                            onClick={onSelectLecture}
-                          />
-                        );
-                      })()}
-                    </div>
-                  ))}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="text-center text-gray-500 py-4">
-          Please select both division and year to view the timetable.
-        </div>
-      )}
-    </Card>
+    </div>
   );
 };
 

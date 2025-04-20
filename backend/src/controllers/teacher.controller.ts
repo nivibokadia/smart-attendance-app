@@ -1,0 +1,126 @@
+import { Request, Response } from 'express';
+import Attendance from '../models/Attendance';
+import User from '../models/User';
+import ExcelJS from 'exceljs';
+
+// @desc    Get all attendance records
+// @route   GET /api/teacher/attendance
+// @access  Private (Teacher)
+export const getAttendance = async (req: Request, res: Response) => {
+  try {
+    const { date, subject, division, year } = req.query;
+    
+    const query: any = {};
+    
+    if (date) {
+      const startDate = new Date(date as string);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 1);
+      query.createdAt = { $gte: startDate, $lt: endDate };
+    }
+    
+    if (subject) query.subject = subject;
+    if (division) query.division = division;
+    if (year) query.year = year;
+
+    const attendance = await Attendance.find(query)
+      .sort({ createdAt: -1 })
+      .populate('studentId', 'name sapId rollNo division');
+
+    res.json(attendance);
+  } catch (error) {
+    res.status(400).json({ message: 'Error fetching attendance records' });
+  }
+};
+
+// @desc    Get attendance statistics
+// @route   GET /api/teacher/attendance/stats
+// @access  Private (Teacher)
+export const getAttendanceStats = async (req: Request, res: Response) => {
+  try {
+    const stats = await Attendance.aggregate([
+      {
+        $group: {
+          _id: {
+            subject: '$subject',
+            division: '$division'
+          },
+          totalAttendance: { $sum: 1 },
+          presentCount: {
+            $sum: { $cond: [{ $eq: ['$status', 'present'] }, 1, 0] }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          subject: '$_id.subject',
+          division: '$_id.division',
+          totalAttendance: 1,
+          presentCount: 1,
+          attendancePercentage: {
+            $multiply: [
+              { $divide: ['$presentCount', '$totalAttendance'] },
+              100
+            ]
+          }
+        }
+      }
+    ]);
+
+    res.json(stats);
+  } catch (error) {
+    res.status(400).json({ message: 'Error fetching attendance statistics' });
+  }
+};
+
+// @desc    Download attendance as Excel
+// @route   GET /api/teacher/attendance/download
+// @access  Private (Teacher)
+export const downloadAttendance = async (req: Request, res: Response) => {
+  try {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Attendance');
+
+    // Add headers
+    worksheet.columns = [
+      { header: 'Student ID', key: 'studentId', width: 15 },
+      { header: 'Student Name', key: 'studentName', width: 20 },
+      { header: 'Date', key: 'date', width: 15 },
+      { header: 'Status', key: 'status', width: 10 },
+      { header: 'Subject', key: 'subject', width: 15 }
+    ];
+
+    // Get all attendance records
+    const attendance = await Attendance.find()
+      .populate('studentId', 'name studentId');
+
+    // Add rows
+    attendance.forEach(record => {
+      worksheet.addRow({
+        studentId: record.studentId.studentId,
+        studentName: record.studentId.name,
+        date: record.date.toLocaleDateString(),
+        status: record.status,
+        subject: record.subject
+      });
+    });
+
+    // Set response headers
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=attendance.xlsx'
+    );
+
+    // Write to response
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    res.status(400).json({ message: 'Error generating attendance report' });
+  }
+}; 

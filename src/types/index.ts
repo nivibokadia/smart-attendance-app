@@ -1,4 +1,3 @@
-
 export interface Student {
   name: string;
   sapId: string;
@@ -19,7 +18,10 @@ export interface Attendance extends Student {
 export interface LectureData {
   id: string;
   subject: string;
+  professor: string;
   time: string;
+  day: string;
+  room: string;
   division: string;
   year: string;
 }

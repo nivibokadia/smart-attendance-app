@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LectureData } from '@/types';
 
@@ -9,17 +8,26 @@ interface TimetableCellProps {
 }
 
 const TimetableCell: React.FC<TimetableCellProps> = ({ lecture, isSelected, onClick }) => {
-  if (!lecture) return <div className="h-full border border-gray-200" />;
+  if (!lecture) return null;
 
   return (
     <div
-      className={`h-full p-2 ${
-        isSelected ? 'bg-green-500' : 'bg-blue-500'
-      } text-white cursor-pointer hover:opacity-90 transition-colors`}
+      className={`h-full p-3 ${
+        isSelected 
+          ? 'bg-green-500/90 hover:bg-green-500 ring-2 ring-green-600/50' 
+          : 'bg-blue-500/90 hover:bg-blue-500 ring-1 ring-blue-600/30'
+      } text-white cursor-pointer transition-all duration-200 rounded-lg shadow-sm hover:shadow-md 
+      hover:scale-[1.02] transform-gpu m-1 backdrop-blur-sm`}
       onClick={() => onClick?.(lecture)}
     >
-      <div className="text-sm font-medium">{lecture.time}</div>
-      <div className="text-sm">{lecture.subject}</div>
+      <div className="flex flex-col h-full">
+        <div className="text-xs font-medium text-white/80 mb-1.5">{lecture.time}</div>
+        <div className="font-semibold text-sm leading-snug mb-2">{lecture.subject}</div>
+        <div className="text-xs font-medium mt-auto text-white/80 flex items-center gap-1">
+          <div className="w-1.5 h-1.5 rounded-full bg-white/60" />
+          {lecture.division}
+        </div>
+      </div>
     </div>
   );
 };
