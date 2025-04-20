@@ -1,26 +1,15 @@
-
 import { Attendance, LectureData } from "@/types";
 
 // Sample lecture data
 export const LECTURES: LectureData[] = [
-  { id: '1', subject: 'Web Development', time: '9:00 AM - 10:00 AM', division: 'A', year: 'TE' },
-  { id: '2', subject: 'Data Structures', time: '10:00 AM - 11:00 AM', division: 'A', year: 'TE' },
-  { id: '3', subject: 'Computer Networks', time: '11:00 AM - 12:00 PM', division: 'A', year: 'TE' },
-  { id: '4', subject: 'Operating Systems', time: '1:00 PM - 2:00 PM', division: 'B', year: 'TE' },
-  { id: '5', subject: 'Database Systems', time: '2:00 PM - 3:00 PM', division: 'B', year: 'TE' },
-  { id: '6', subject: 'Software Engineering', time: '3:00 PM - 4:00 PM', division: 'B', year: 'TE' },
-  { id: '7', subject: 'Mathematics', time: '9:00 AM - 10:00 AM', division: 'A', year: 'SE' },
-  { id: '8', subject: 'Physics', time: '10:00 AM - 11:00 AM', division: 'A', year: 'SE' },
-  { id: '9', subject: 'Chemistry', time: '11:00 AM - 12:00 PM', division: 'B', year: 'SE' },
-  { id: '10', subject: 'English', time: '1:00 PM - 2:00 PM', division: 'B', year: 'SE' },
-  { id: '11', subject: 'Economics', time: '9:00 AM - 10:00 AM', division: 'A', year: 'FE' },
-  { id: '12', subject: 'Introduction to Programming', time: '10:00 AM - 11:00 AM', division: 'A', year: 'FE' },
-  { id: '13', subject: 'Digital Electronics', time: '9:00 AM - 10:00 AM', division: 'B', year: 'FE' },
-  { id: '14', subject: 'Communication Skills', time: '10:00 AM - 11:00 AM', division: 'B', year: 'FE' },
-  { id: '15', subject: 'Project Management', time: '9:00 AM - 10:00 AM', division: 'A', year: 'BE' },
-  { id: '16', subject: 'Artificial Intelligence', time: '10:00 AM - 11:00 AM', division: 'A', year: 'BE' },
-  { id: '17', subject: 'Cloud Computing', time: '9:00 AM - 10:00 AM', division: 'B', year: 'BE' },
-  { id: '18', subject: 'Machine Learning', time: '10:00 AM - 11:00 AM', division: 'B', year: 'BE' },
+  { id: '1', subject: 'ISIG Laboratory', time: '8:00 AM - 10:00 AM', division: 'A', year: 'TE' },
+  { id: '2', subject: 'FSD Laboratory', time: '8:30 AM - 10:30 AM', division: 'A', year: 'TE' },
+  { id: '3', subject: 'IPCV', time: '9:30 AM - 10:30 AM', division: 'B', year: 'TE' },
+  { id: '4', subject: 'SE', time: '10:30 AM - 11:30 AM', division: 'A', year: 'BE' },
+  { id: '5', subject: 'ML', time: '11:00 AM - 12:00 PM', division: 'B', year: 'BE' },
+  { id: '6', subject: 'SE Laboratory', time: '12:00 PM - 2:00 PM', division: 'A', year: 'TE' },
+  { id: '7', subject: 'IPCV Laboratory', time: '12:30 PM - 2:30 PM', division: 'B', year: 'TE' },
+  { id: '8', subject: 'ISIG', time: '1:30 PM - 2:30 PM', division: 'A', year: 'BE' }
 ];
 
 // Sample attendance data

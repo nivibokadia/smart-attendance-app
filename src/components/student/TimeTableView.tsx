@@ -1,12 +1,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { LectureData } from '@/types';
-import { getFilteredLectures, DIVISIONS, YEARS } from '@/utils/mockData';
 import { Card } from '@/components/ui/card';
+import TimetableCell from './TimetableCell';
+import { getFilteredLectures, DIVISIONS, YEARS } from '@/utils/mockData';
 
 interface TimeTableViewProps {
   onSelectLecture: (lecture: LectureData) => void;
 }
+
+const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const TIME_SLOTS = [
+  '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',
+  '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM'
+];
 
 const TimeTableView: React.FC<TimeTableViewProps> = ({ onSelectLecture }) => {
   const [division, setDivision] = useState<string>('');
@@ -16,6 +23,13 @@ const TimeTableView: React.FC<TimeTableViewProps> = ({ onSelectLecture }) => {
   useEffect(() => {
     setLectures(getFilteredLectures(division, year));
   }, [division, year]);
+
+  const getLectureForSlot = (day: string, timeSlot: string): LectureData | undefined => {
+    return lectures.find(lecture => {
+      const [startTime] = lecture.time.split(' - ');
+      return startTime === timeSlot;
+    });
+  };
 
   return (
     <Card className="attendify-card mb-8">
@@ -52,42 +66,35 @@ const TimeTableView: React.FC<TimeTableViewProps> = ({ onSelectLecture }) => {
           </select>
         </div>
       </div>
-      
+
       {division && year ? (
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border px-4 py-2 text-left">Subject</th>
-                <th className="border px-4 py-2 text-left">Time</th>
-                <th className="border px-4 py-2 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lectures.length > 0 ? (
-                lectures.map((lecture) => (
-                  <tr key={lecture.id} className="border-b hover:bg-gray-50">
-                    <td className="border px-4 py-2">{lecture.subject}</td>
-                    <td className="border px-4 py-2">{lecture.time}</td>
-                    <td className="border px-4 py-2">
-                      <button 
-                        className="attendify-button-secondary text-sm"
-                        onClick={() => onSelectLecture(lecture)}
-                      >
-                        Mark Attendance
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={3} className="border px-4 py-2 text-center text-gray-500">
-                    No lectures available for the selected division and year.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <div className="min-w-[800px]">
+            <div className="grid grid-cols-[100px_repeat(7,1fr)]">
+              {/* Header row with days */}
+              <div className="font-medium p-2 bg-gray-100 border border-gray-200">Time</div>
+              {DAYS_OF_WEEK.map(day => (
+                <div key={day} className="font-medium p-2 bg-gray-100 border border-gray-200">
+                  {day}
+                </div>
+              ))}
+
+              {/* Time slots and lecture cells */}
+              {TIME_SLOTS.map(timeSlot => (
+                <React.Fragment key={timeSlot}>
+                  <div className="p-2 border border-gray-200 font-medium">{timeSlot}</div>
+                  {DAYS_OF_WEEK.map(day => (
+                    <div key={`${day}-${timeSlot}`} className="h-16 border border-gray-200">
+                      <TimetableCell
+                        lecture={getLectureForSlot(day, timeSlot)}
+                        onClick={onSelectLecture}
+                      />
+                    </div>
+                  ))}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
         </div>
       ) : (
         <div className="text-center text-gray-500 py-4">
