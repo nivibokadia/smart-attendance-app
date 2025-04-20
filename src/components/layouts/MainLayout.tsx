@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -8,36 +10,29 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    navigate('/');
+  };
   
   return (
     <div className="min-h-screen bg-attendify-background">
       <header className="bg-attendify-primary text-white shadow">
         <div className="attendify-container py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/home" className="flex items-center space-x-2">
               <span className="text-2xl font-bold">Attend-ify</span>
               <span className="text-sm">Student Scribe</span>
             </Link>
-            <nav className="hidden md:flex space-x-6">
-              <Link 
-                to="/" 
-                className={`transition-colors hover:text-accent ${location.pathname === '/' ? 'text-white font-semibold' : 'text-white/80'}`}
-              >
-                Home
-              </Link>
-              <Link 
-                to="/student" 
-                className={`transition-colors hover:text-accent ${location.pathname === '/student' ? 'text-white font-semibold' : 'text-white/80'}`}
-              >
-                Student
-              </Link>
-              <Link 
-                to="/teacher" 
-                className={`transition-colors hover:text-accent ${location.pathname === '/teacher' ? 'text-white font-semibold' : 'text-white/80'}`}
-              >
-                Teacher
-              </Link>
-            </nav>
+            <Button 
+              variant="outline" 
+              className="text-white hover:text-attendify-primary"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
           </div>
         </div>
       </header>
