@@ -8,23 +8,31 @@ import AttendanceForm from '@/components/student/AttendanceForm';
 import { MOCK_ATTENDANCE } from '@/utils/mockData';
 
 const StudentPage = () => {
-  const [selectedLecture, setSelectedLecture] = useState<LectureData | undefined>();
+  const [selectedLectures, setSelectedLectures] = useState<LectureData[]>([]);
 
   const handleSelectLecture = (lecture: LectureData) => {
-    setSelectedLecture(lecture);
-    toast.info(`Selected lecture: ${lecture.subject}`);
+    setSelectedLectures(prev => {
+      const isAlreadySelected = prev.some(l => l.id === lecture.id);
+      if (isAlreadySelected) {
+        return prev.filter(l => l.id !== lecture.id);
+      }
+      return [...prev, lecture];
+    });
   };
 
   const handleSubmitAttendance = (data: Student & { subject: string; lectureTime: string }) => {
-    // In a real app, this would make an API call to submit the attendance
-    console.log('Submitted attendance:', {
-      ...data,
-      date: new Date(),
+    // Submit attendance for all selected lectures
+    selectedLectures.forEach(lecture => {
+      console.log('Submitted attendance:', {
+        ...data,
+        subject: lecture.subject,
+        lectureTime: lecture.time,
+        date: new Date(),
+      });
     });
     
-    // For demo purposes, we'll just show a success message
-    toast.success("Attendance submitted successfully!");
-    setSelectedLecture(undefined);
+    toast.success("Attendance submitted for all selected lectures!");
+    setSelectedLectures([]);
   };
 
   return (
@@ -34,10 +42,14 @@ const StudentPage = () => {
           Student Attendance Portal
         </h1>
         
-        <TimeTableView onSelectLecture={handleSelectLecture} />
         <AttendanceForm 
-          selectedLecture={selectedLecture}
+          selectedLectures={selectedLectures}
           onSubmit={handleSubmitAttendance}
+        />
+
+        <TimeTableView 
+          selectedLectures={selectedLectures}
+          onSelectLecture={handleSelectLecture} 
         />
       </div>
     </MainLayout>

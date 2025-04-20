@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { LectureData } from '@/types';
 import { Card } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import TimetableCell from './TimetableCell';
 import { getFilteredLectures, DIVISIONS, YEARS } from '@/utils/mockData';
 
 interface TimeTableViewProps {
+  selectedLectures: LectureData[];
   onSelectLecture: (lecture: LectureData) => void;
 }
 
@@ -15,7 +15,7 @@ const TIME_SLOTS = [
   '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM'
 ];
 
-const TimeTableView: React.FC<TimeTableViewProps> = ({ onSelectLecture }) => {
+const TimeTableView: React.FC<TimeTableViewProps> = ({ selectedLectures, onSelectLecture }) => {
   const [division, setDivision] = useState<string>('');
   const [year, setYear] = useState<string>('');
   const [lectures, setLectures] = useState<LectureData[]>([]);
@@ -31,8 +31,12 @@ const TimeTableView: React.FC<TimeTableViewProps> = ({ onSelectLecture }) => {
     });
   };
 
+  const isLectureSelected = (lecture: LectureData) => {
+    return selectedLectures.some(l => l.id === lecture.id);
+  };
+
   return (
-    <Card className="attendify-card mb-8">
+    <Card className="attendify-card mt-8">
       <h2 className="text-xl font-bold mb-6 text-center">Timetable View</h2>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -71,7 +75,6 @@ const TimeTableView: React.FC<TimeTableViewProps> = ({ onSelectLecture }) => {
         <div className="overflow-x-auto">
           <div className="min-w-[800px]">
             <div className="grid grid-cols-[100px_repeat(7,1fr)]">
-              {/* Header row with days */}
               <div className="font-medium p-2 bg-gray-100 border border-gray-200">Time</div>
               {DAYS_OF_WEEK.map(day => (
                 <div key={day} className="font-medium p-2 bg-gray-100 border border-gray-200">
@@ -79,16 +82,21 @@ const TimeTableView: React.FC<TimeTableViewProps> = ({ onSelectLecture }) => {
                 </div>
               ))}
 
-              {/* Time slots and lecture cells */}
               {TIME_SLOTS.map(timeSlot => (
                 <React.Fragment key={timeSlot}>
                   <div className="p-2 border border-gray-200 font-medium">{timeSlot}</div>
                   {DAYS_OF_WEEK.map(day => (
                     <div key={`${day}-${timeSlot}`} className="h-16 border border-gray-200">
-                      <TimetableCell
-                        lecture={getLectureForSlot(day, timeSlot)}
-                        onClick={onSelectLecture}
-                      />
+                      {(() => {
+                        const lecture = getLectureForSlot(day, timeSlot);
+                        return (
+                          <TimetableCell
+                            lecture={lecture}
+                            isSelected={lecture ? isLectureSelected(lecture) : false}
+                            onClick={onSelectLecture}
+                          />
+                        );
+                      })()}
                     </div>
                   ))}
                 </React.Fragment>

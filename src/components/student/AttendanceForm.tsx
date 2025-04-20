@@ -1,23 +1,22 @@
-
 import React, { useState } from 'react';
 import { toast } from 'sonner';
-import { Student, LectureData, CommitteeType } from '@/types';
+import { Student, LectureData } from '@/types';
 import { COMMITTEES, DIVISIONS, YEARS } from '@/utils/mockData';
 import { Card } from '@/components/ui/card';
 
 interface AttendanceFormProps {
-  selectedLecture?: LectureData;
+  selectedLectures: LectureData[];
   onSubmit: (data: Student & { subject: string; lectureTime: string }) => void;
 }
 
-const AttendanceForm: React.FC<AttendanceFormProps> = ({ selectedLecture, onSubmit }) => {
+const AttendanceForm: React.FC<AttendanceFormProps> = ({ selectedLectures, onSubmit }) => {
   const [formData, setFormData] = useState<Student>({
     name: '',
     sapId: '',
     rollNo: '',
     committee: 'None',
-    division: selectedLecture?.division || '',
-    year: selectedLecture?.year || '',
+    division: selectedLectures[0]?.division || '',
+    year: selectedLectures[0]?.year || '',
     reason: '',
   });
 
@@ -27,7 +26,6 @@ const AttendanceForm: React.FC<AttendanceFormProps> = ({ selectedLecture, onSubm
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     
-    // Clear error for field when changed
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -54,25 +52,24 @@ const AttendanceForm: React.FC<AttendanceFormProps> = ({ selectedLecture, onSubm
       return;
     }
     
-    if (!selectedLecture) {
-      toast.error("Please select a lecture first");
+    if (!selectedLectures.length) {
+      toast.error("Please select one or more lectures first");
       return;
     }
     
     onSubmit({
       ...formData,
-      subject: selectedLecture.subject,
-      lectureTime: selectedLecture.time,
+      subject: selectedLectures[0].subject,
+      lectureTime: selectedLectures[0].time,
     });
     
-    // Reset form
     setFormData({
       name: '',
       sapId: '',
       rollNo: '',
       committee: 'None',
-      division: selectedLecture.division,
-      year: selectedLecture.year,
+      division: selectedLectures[0].division,
+      year: selectedLectures[0].year,
       reason: '',
     });
     
@@ -80,28 +77,24 @@ const AttendanceForm: React.FC<AttendanceFormProps> = ({ selectedLecture, onSubm
   };
 
   return (
-    <Card className="attendify-card">
+    <Card className="attendify-card mb-8">
       <h2 className="text-xl font-bold mb-6 text-center">Student Attendance Form</h2>
       
-      {selectedLecture ? (
+      {selectedLectures.length > 0 ? (
         <div className="bg-attendify-accent/20 p-4 rounded-md mb-6">
-          <h3 className="font-medium text-gray-700">Selected Lecture:</h3>
-          <p className="text-gray-600">
-            <strong>Subject:</strong> {selectedLecture.subject}
-          </p>
-          <p className="text-gray-600">
-            <strong>Time:</strong> {selectedLecture.time}
-          </p>
-          <p className="text-gray-600">
-            <strong>Division:</strong> {selectedLecture.division}
-          </p>
-          <p className="text-gray-600">
-            <strong>Year:</strong> {selectedLecture.year}
-          </p>
+          <h3 className="font-medium text-gray-700 mb-2">Selected Lectures:</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            {selectedLectures.map((lecture) => (
+              <div key={lecture.id} className="text-sm text-gray-600 p-2 bg-white rounded border">
+                <p><strong>Subject:</strong> {lecture.subject}</p>
+                <p><strong>Time:</strong> {lecture.time}</p>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="bg-yellow-50 p-4 rounded-md mb-6 text-center">
-          <p className="text-yellow-700">Please select a lecture from the timetable above.</p>
+          <p className="text-yellow-700">Please select one or more lectures from the timetable below.</p>
         </div>
       )}
       
@@ -184,7 +177,7 @@ const AttendanceForm: React.FC<AttendanceFormProps> = ({ selectedLecture, onSubm
               className={`attendify-select ${errors.division ? 'border-red-500' : ''}`}
               value={formData.division}
               onChange={handleChange}
-              disabled={!!selectedLecture}
+              disabled={!!selectedLectures.length}
             >
               <option value="">Select Division</option>
               {DIVISIONS.map((division) => (
@@ -206,7 +199,7 @@ const AttendanceForm: React.FC<AttendanceFormProps> = ({ selectedLecture, onSubm
               className={`attendify-select ${errors.year ? 'border-red-500' : ''}`}
               value={formData.year}
               onChange={handleChange}
-              disabled={!!selectedLecture}
+              disabled={!!selectedLectures.length}
             >
               <option value="">Select Year</option>
               {YEARS.map((year) => (
@@ -238,7 +231,7 @@ const AttendanceForm: React.FC<AttendanceFormProps> = ({ selectedLecture, onSubm
           <button
             type="submit"
             className="attendify-button-primary px-8 py-2"
-            disabled={!selectedLecture}
+            disabled={!selectedLectures.length}
           >
             Submit Attendance
           </button>
