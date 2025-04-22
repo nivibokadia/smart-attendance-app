@@ -1,13 +1,13 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 import express, { Express } from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoutes from './routes/auth.routes';
 import studentRoutes from './routes/student.routes';
 import teacherRoutes from './routes/teacher.routes';
-
-// Load environment variables
-dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;

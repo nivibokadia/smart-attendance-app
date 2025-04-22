@@ -1,93 +1,215 @@
-
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { School } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import MainLayout from '@/components/layouts/MainLayout';
-import { Card } from '@/components/ui/card';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config/api';
 
 const Home = () => {
+  const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true);
+  const [userType, setUserType] = useState<'student' | 'teacher'>('student');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Registration states
+  const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [studentId, setStudentId] = useState('');
+  const [department, setDepartment] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+        email,
+        password,
+        role: userType
+      });
+
+      if (response.data.role !== userType) {
+        throw new Error(`Please login as a ${response.data.role}`);
+      }
+
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userRole', response.data.role);
+      
+      if (userType === 'student') {
+        navigate('/student');
+      } else {
+        navigate('/teacher');
+      }
+      
+      toast.success(`Logged in as ${userType}`);
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error(error.response?.data?.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!name || !email || !password || !phoneNumber || !department || (userType === 'student' && !studentId)) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, {
+        name,
+        email,
+        password,
+        role: userType,
+        studentId: userType === 'student' ? studentId : undefined,
+        department,
+        phoneNumber
+      });
+
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userRole', response.data.role);
+      toast.success('Registration successful!');
+      
+      if (userType === 'student') {
+        navigate('/student');
+      } else {
+        navigate('/teacher');
+      }
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast.error(error.response?.data?.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <MainLayout>
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-attendify-primary mb-4">
-            Welcome to Attend-ify
-          </h1>
-          <p className="text-xl text-gray-600">
-            The smart attendance management system for educational institutions
-          </p>
-        </div>
-        
-        <Card className="attendify-card p-8 mb-12">
-          <h2 className="text-2xl font-bold mb-4 text-center">Key Features</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-attendify-accent rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-6 h-6 text-attendify-primary"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <h3 className="font-semibold mb-2">Easy Attendance</h3>
-              <p className="text-sm text-gray-600">
-                Simple form-based interface for quick attendance submission
-              </p>
+      <div className="min-h-screen flex items-center justify-center bg-attendify-background">
+        <Card className="w-full max-w-md p-6">
+          <CardHeader className="space-y-1 flex flex-col items-center">
+            <div className="w-12 h-12 bg-attendify-primary rounded-full flex items-center justify-center mb-4">
+              <School className="w-6 h-6 text-white" />
             </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-attendify-accent rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-6 h-6 text-attendify-primary"
+            <CardTitle className="text-2xl font-bold text-center">
+              {isLogin ? 'Welcome to Attend-ify' : 'Create Account'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <Button
+                  type="button"
+                  variant={userType === 'student' ? 'default' : 'outline'}
+                  onClick={() => setUserType('student')}
+                  className="w-full"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <h3 className="font-semibold mb-2">Tabular Data</h3>
-              <p className="text-sm text-gray-600">
-                View attendance records in an organized, filterable table
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-attendify-accent rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-6 h-6 text-attendify-primary"
+                  Student
+                </Button>
+                <Button
+                  type="button"
+                  variant={userType === 'teacher' ? 'default' : 'outline'}
+                  onClick={() => setUserType('teacher')}
+                  className="w-full"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                  />
-                </svg>
+                  Teacher
+                </Button>
               </div>
-              <h3 className="font-semibold mb-2">Excel Export</h3>
-              <p className="text-sm text-gray-600">
-                Export attendance data to Excel with a single click
-              </p>
-            </div>
-          </div>
+
+              {!isLogin && (
+                <>
+                  <div className="space-y-2">
+                    <Input
+                      type="text"
+                      placeholder="Full Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                  {userType === 'student' && (
+                    <div className="space-y-2">
+                      <Input
+                        type="text"
+                        placeholder="Student ID"
+                        value={studentId}
+                        onChange={(e) => setStudentId(e.target.value)}
+                      />
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    <Input
+                      type="text"
+                      placeholder="Department"
+                      value={department}
+                      onChange={(e) => setDepartment(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Input
+                      type="tel"
+                      placeholder="Phone Number"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              <div className="space-y-2">
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Processing...' : (isLogin ? 'Login' : 'Register')}
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <Button
+              variant="link"
+              onClick={() => {
+                setIsLogin(!isLogin);
+                // Clear form fields when switching between login and register
+                if (!isLogin) {
+                  setName('');
+                  setPhoneNumber('');
+                  setStudentId('');
+                  setDepartment('');
+                }
+              }}
+            >
+              {isLogin ? 'Create an account' : 'Already have an account?'}
+            </Button>
+          </CardFooter>
         </Card>
       </div>
     </MainLayout>

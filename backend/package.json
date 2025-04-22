@@ -13,13 +13,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vitejs/plugin-react-swc": "^3.9.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
+    "dns": "^0.1.2",
+    "dotenv": "^16.5.0",
     "exceljs": "^4.3.0",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.3"
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.8.6",
+    "react-router-dom": "^7.5.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

@@ -21,6 +21,12 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      // Handle unauthorized access
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole');
+      window.location.href = '/';
+    }
     console.error('API Error:', {
       url: error.config?.url,
       method: error.config?.method,
@@ -34,10 +40,19 @@ api.interceptors.response.use(
 export const studentApi = {
   markAttendance: async (data: Student & { subject: string; lectureTime: string }) => {
     try {
-      const response = await api.post('/student/attendance', data);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await api.post('/student/attendance', {
+        ...data,
+        division: 'I2', // Default division
+        year: 'BE' // Default year
+      });
       return response.data;
-    } catch (error) {
-      console.error('Mark Attendance Error:', error);
+    } catch (error: any) {
+      console.error('Mark Attendance Error:', error.response?.data || error.message);
       throw error;
     }
   },

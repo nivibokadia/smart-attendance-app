@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Student, LectureData } from '@/types';
 import MainLayout from '@/components/layouts/MainLayout';
 import TimeTableView from '@/components/student/TimeTableView';
 import AttendanceForm from '@/components/student/AttendanceForm';
 import { studentApi } from '@/services/api';
+import { useNavigate } from 'react-router-dom';
 
 const StudentPage = () => {
+  const navigate = useNavigate();
   const [selectedLectures, setSelectedLectures] = useState<LectureData[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    const userRole = localStorage.getItem('userRole');
+    
+    if (!token || userRole !== 'student') {
+      navigate('/');
+    }
+  }, [navigate]);
 
   const handleSelectLecture = (lecture: LectureData) => {
     setSelectedLectures(prev => {
@@ -21,6 +33,11 @@ const StudentPage = () => {
   };
 
   const handleSubmitAttendance = async (data: Student & { subject: string; lectureTime: string }) => {
+    if (selectedLectures.length === 0) {
+      toast.error('Please select at least one lecture');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       // Submit attendance for all selected lectures
@@ -29,14 +46,16 @@ const StudentPage = () => {
           ...data,
           subject: lecture.subject,
           lectureTime: lecture.time,
+          division: lecture.division,
+          year: lecture.year
         })
       ));
       
       toast.success("Attendance submitted successfully!");
       setSelectedLectures([]);
-    } catch (error) {
-      toast.error("Failed to submit attendance. Please try again.");
+    } catch (error: any) {
       console.error('Error submitting attendance:', error);
+      toast.error(error.response?.data?.message || "Failed to submit attendance. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
