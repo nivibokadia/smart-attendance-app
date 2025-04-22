@@ -10,11 +10,25 @@ import studentRoutes from './routes/student.routes';
 import teacherRoutes from './routes/teacher.routes';
 
 const app: Express = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 3000; // Changed to port 3000 to avoid conflicts
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
+
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ 
+    message: 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
 
 // Routes
 app.use('/api/auth', authRoutes);

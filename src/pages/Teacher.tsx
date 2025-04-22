@@ -5,6 +5,7 @@ import { teacherApi } from '@/services/api';
 import { Attendance } from '@/types';
 import FilterControls from '@/components/teacher/FilterControls';
 import AttendanceTable from '@/components/teacher/AttendanceTable';
+import { exportToExcel } from '@/utils/excelExport';
 
 const TeacherPage = () => {
   const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
@@ -19,7 +20,16 @@ const TeacherPage = () => {
   }) => {
     try {
       setIsLoading(true);
-      const data = await teacherApi.getAttendance(filters);
+      const params: any = {};
+      
+      if (filters?.date) {
+        params.date = filters.date.toISOString().split('T')[0];
+      }
+      if (filters?.subject) params.subject = filters.subject;
+      if (filters?.division) params.division = filters.division;
+      if (filters?.year) params.year = filters.year;
+
+      const data = await teacherApi.getAttendance(params);
       setAttendanceData(data);
     } catch (error) {
       toast.error('Failed to fetch attendance data');
@@ -53,8 +63,12 @@ const TeacherPage = () => {
   };
 
   const handleExport = (data: Attendance[]) => {
-    // Implementation for exporting data to Excel
-    console.log('Exporting data:', data);
+    if (data.length === 0) {
+      toast.error('No data to export');
+      return;
+    }
+    exportToExcel(data, 'attendance-report');
+    toast.success('Attendance data exported successfully');
   };
 
   return (

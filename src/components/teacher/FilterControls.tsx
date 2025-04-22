@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { DIVISIONS, YEARS, LECTURES } from '@/utils/mockData';
 import { Card } from '@/components/ui/card';
+import { toast } from 'sonner';
 
 interface FilterControlsProps {
   onFilter: (filters: {
@@ -22,12 +22,27 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onFilter }) => {
   const subjects = Array.from(new Set(LECTURES.map(lecture => lecture.subject)));
 
   const handleApplyFilters = () => {
-    onFilter({
-      date: date ? new Date(date) : undefined,
-      subject: subject || undefined,
-      division: division || undefined,
-      year: year || undefined,
-    });
+    try {
+      const filters: any = {};
+      
+      if (date) {
+        const selectedDate = new Date(date);
+        if (isNaN(selectedDate.getTime())) {
+          toast.error('Invalid date selected');
+          return;
+        }
+        filters.date = selectedDate;
+      }
+      
+      if (subject) filters.subject = subject;
+      if (division) filters.division = division;
+      if (year) filters.year = year;
+
+      onFilter(filters);
+    } catch (error) {
+      console.error('Error applying filters:', error);
+      toast.error('Error applying filters');
+    }
   };
 
   const handleClearFilters = () => {

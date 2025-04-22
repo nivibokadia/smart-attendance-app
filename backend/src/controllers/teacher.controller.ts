@@ -17,19 +17,22 @@ export const getAttendance = async (req: Request, res: Response) => {
       startDate.setHours(0, 0, 0, 0);
       const endDate = new Date(startDate);
       endDate.setDate(endDate.getDate() + 1);
-      query.createdAt = { $gte: startDate, $lt: endDate };
+      query.date = { $gte: startDate, $lt: endDate };
     }
     
     if (subject) query.subject = subject;
     if (division) query.division = division;
     if (year) query.year = year;
 
+    console.log('Query:', query); // Add logging to debug
+
     const attendance = await Attendance.find(query)
-      .sort({ createdAt: -1 })
+      .sort({ date: -1 })
       .populate('studentId', 'name sapId rollNo division');
 
     res.json(attendance);
   } catch (error) {
+    console.error('Error in getAttendance:', error);
     res.status(400).json({ message: 'Error fetching attendance records' });
   }
 };

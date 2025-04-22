@@ -20,7 +20,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
-      const user = await User.findById(decoded.id);
+      const user = await User.findById(decoded.id).select('+rollNo');
 
       if (!user) {
         return res.status(401).json({ message: 'User not found' });

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
@@ -23,11 +22,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="flex items-center justify-between">
             <Link to="/home" className="flex items-center space-x-2">
               <span className="text-2xl font-bold">Attend-ify</span>
-              <span className="text-sm">Student Scribe</span>
             </Link>
             <Button 
               variant="outline" 
-              className="text-white hover:text-attendify-primary"
+              className="text-black hover:text-attendify-primary border-black hover:border-attendify-primary"
               onClick={handleLogout}
             >
               <LogOut className="mr-2 h-4 w-4" />
@@ -42,7 +40,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <footer className="bg-gray-100 border-t">
         <div className="attendify-container py-6">
           <div className="text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} Attend-ify: Student Scribe. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Attend-ify. All rights reserved.</p>
           </div>
         </div>
       </footer>

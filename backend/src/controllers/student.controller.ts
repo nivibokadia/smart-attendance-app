@@ -29,6 +29,7 @@ export const markAttendance = async (req: AuthRequest, res: Response) => {
       status: 'present',
       name: req.user.name,
       sapId: req.user.studentId,
+      rollNo: req.body.rollNo,
       division: req.body.division,
       year: req.body.year
     });

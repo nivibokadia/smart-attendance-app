@@ -7,6 +7,7 @@ export interface IUser extends Document {
   password: string;
   role: 'student' | 'teacher';
   studentId?: string;
+  rollNo?: string;
   department?: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -35,6 +36,11 @@ const userSchema = new Schema({
     required: true,
   },
   studentId: {
+    type: String,
+    required: function(this: IUser) { return this.role === 'student'; },
+    unique: function(this: IUser) { return this.role === 'student'; },
+  },
+  rollNo: {
     type: String,
     required: function(this: IUser) { return this.role === 'student'; },
     unique: function(this: IUser) { return this.role === 'student'; },

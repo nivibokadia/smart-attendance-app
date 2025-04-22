@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Student, Attendance } from '@/types';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -51,21 +51,21 @@ export const studentApi = {
         year: 'BE' // Default year
       });
       return response.data;
-    } catch (error: any) {
-      console.error('Mark Attendance Error:', error.response?.data || error.message);
+    } catch (error) {
+      console.error('Error marking attendance:', error);
       throw error;
     }
   },
 
-  getAttendance: async () => {
+  getAttendance: async (studentId: string) => {
     try {
-      const response = await api.get('/student/attendance');
+      const response = await api.get(`/student/attendance/${studentId}`);
       return response.data;
     } catch (error) {
-      console.error('Get Attendance Error:', error);
+      console.error('Error getting attendance:', error);
       throw error;
     }
-  },
+  }
 };
 
 export const teacherApi = {

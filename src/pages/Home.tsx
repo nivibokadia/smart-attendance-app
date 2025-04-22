@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import MainLayout from '@/components/layouts/MainLayout';
-import axios from 'axios';
-import { API_BASE_URL } from '@/config/api';
+import api from '@/config/api';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -21,6 +20,7 @@ const Home = () => {
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [studentId, setStudentId] = useState('');
+  const [rollNo, setRollNo] = useState('');
   const [department, setDepartment] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -33,7 +33,7 @@ const Home = () => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+      const response = await api.post('/auth/login', {
         email,
         password,
         role: userType
@@ -64,19 +64,20 @@ const Home = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name || !email || !password || !phoneNumber || !department || (userType === 'student' && !studentId)) {
+    if (!name || !email || !password || !phoneNumber || !department || (userType === 'student' && (!studentId || !rollNo))) {
       toast.error('Please fill in all fields');
       return;
     }
 
     try {
       setIsLoading(true);
-      const response = await axios.post(`${API_BASE_URL}/auth/register`, {
+      const response = await api.post('/auth/register', {
         name,
         email,
         password,
         role: userType,
         studentId: userType === 'student' ? studentId : undefined,
+        rollNo: userType === 'student' ? rollNo : undefined,
         department,
         phoneNumber
       });
@@ -142,14 +143,24 @@ const Home = () => {
                     />
                   </div>
                   {userType === 'student' && (
-                    <div className="space-y-2">
-                      <Input
-                        type="text"
-                        placeholder="Student ID"
-                        value={studentId}
-                        onChange={(e) => setStudentId(e.target.value)}
-                      />
-                    </div>
+                    <>
+                      <div className="space-y-2">
+                        <Input
+                          type="text"
+                          placeholder="Student ID"
+                          value={studentId}
+                          onChange={(e) => setStudentId(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Input
+                          type="text"
+                          placeholder="Roll Number"
+                          value={rollNo}
+                          onChange={(e) => setRollNo(e.target.value)}
+                        />
+                      </div>
+                    </>
                   )}
                   <div className="space-y-2">
                     <Input
