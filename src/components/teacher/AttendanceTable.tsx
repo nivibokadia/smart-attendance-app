@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 import { Attendance } from '@/types';
 import { Card } from '@/components/ui/card';
-import { exportToExcel } from '@/utils/excelExport';
 
 interface AttendanceTableProps {
   attendanceData: Attendance[];
   onExport: (data: Attendance[]) => void;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
-const AttendanceTable: React.FC<AttendanceTableProps> = ({ 
-  attendanceData, 
-  onExport,
-  isLoading = false
-}) => {
+const AttendanceTable = ({ attendanceData, onExport, isLoading }: AttendanceTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -22,52 +17,32 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   const currentItems = attendanceData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(attendanceData.length / itemsPerPage);
 
-  const handleExport = () => {
-    onExport(attendanceData);
-  };
-
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
-          </div>
+      <div className="animate-pulse space-y-4">
+        <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+        <div className="space-y-3">
+          <div className="h-4 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <Card className="attendify-card">
+    <Card className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">Attendance Records</h2>
+        <h2 className="text-xl font-semibold">Attendance Records</h2>
         <button
-          onClick={handleExport}
-          className="attendify-button-secondary flex items-center"
+          onClick={() => onExport(attendanceData)}
+          className="bg-attendify-primary text-white px-4 py-2 rounded-md hover:bg-attendify-primary/90"
           disabled={attendanceData.length === 0}
         >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            className="h-4 w-4 mr-2" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" 
-            />
-          </svg>
           Export to Excel
         </button>
       </div>
@@ -83,32 +58,32 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
               <th className="border px-4 py-2 text-left">Year</th>
               <th className="border px-4 py-2 text-left">Subject</th>
               <th className="border px-4 py-2 text-left">Lecture Time</th>
-              <th className="border px-4 py-2 text-left">Date</th>
+              <th className="border px-4 py-2 text-left">Day</th>
+              <th className="border px-4 py-2 text-left">Status</th>
             </tr>
           </thead>
           <tbody>
-            {currentItems.length > 0 ? (
-              currentItems.map((record) => (
-                <tr key={record.id} className="border-b hover:bg-gray-50">
-                  <td className="border px-4 py-2">{record.rollNo}</td>
-                  <td className="border px-4 py-2">{record.name}</td>
-                  <td className="border px-4 py-2">{record.sapId}</td>
-                  <td className="border px-4 py-2">{record.division}</td>
-                  <td className="border px-4 py-2">{record.year}</td>
-                  <td className="border px-4 py-2">{record.subject}</td>
-                  <td className="border px-4 py-2">{record.lectureTime}</td>
-                  <td className="border px-4 py-2">
-                    {new Date(record.date).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={8} className="border px-4 py-8 text-center text-gray-500">
-                  No attendance records found matching your filters.
+            {currentItems.map((record) => (
+              <tr key={record.id} className="border-b hover:bg-gray-50">
+                <td className="border px-4 py-2">{record.rollNo}</td>
+                <td className="border px-4 py-2">{record.name}</td>
+                <td className="border px-4 py-2">{record.sapId}</td>
+                <td className="border px-4 py-2">{record.division}</td>
+                <td className="border px-4 py-2">{record.year}</td>
+                <td className="border px-4 py-2">{record.subject}</td>
+                <td className="border px-4 py-2">{record.lectureTime}</td>
+                <td className="border px-4 py-2">{record.weekday}</td>
+                <td className="border px-4 py-2">
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    record.status === 'present' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {record.status}
+                  </span>
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>

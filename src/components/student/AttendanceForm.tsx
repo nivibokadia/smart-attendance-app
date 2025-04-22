@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Student, LectureData } from '@/types';
+import { DIVISIONS, YEARS } from '@/utils/mockData';
 
 interface AttendanceFormProps {
   selectedLectures: LectureData[];
@@ -32,13 +33,13 @@ const AttendanceForm = ({ selectedLectures, onSubmit, isSubmitting }: Attendance
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              SAP
+              SAP ID
             </label>
             <input
               type="text"
               {...register('sapId', { required: 'SAP ID is required' })}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-attendify-primary/20"
-              placeholder="SAPID"
+              placeholder="Enter SAP ID"
             />
             {errors.sapId && (
               <p className="text-red-500 text-xs mt-1">{errors.sapId.message}</p>
@@ -54,10 +55,30 @@ const AttendanceForm = ({ selectedLectures, onSubmit, isSubmitting }: Attendance
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-attendify-primary/20"
             >
               <option value="">Select Division</option>
-              <option value="I2">I2</option>
+              {DIVISIONS.map((div) => (
+                <option key={div} value={div}>{div}</option>
+              ))}
             </select>
             {errors.division && (
               <p className="text-red-500 text-xs mt-1">{errors.division.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Year
+            </label>
+            <select
+              {...register('year', { required: 'Year is required' })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-attendify-primary/20"
+            >
+              <option value="">Select Year</option>
+              {YEARS.map((year) => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+            {errors.year && (
+              <p className="text-red-500 text-xs mt-1">{errors.year.message}</p>
             )}
           </div>
 

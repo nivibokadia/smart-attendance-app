@@ -102,6 +102,9 @@ const Home = () => {
   return (
     <MainLayout>
       <div className="min-h-screen flex items-center justify-center bg-attendify-background">
+        <div className="absolute top-4 right-4 text-sm text-gray-500">
+          DJSCE IT
+        </div>
         <Card className="w-full max-w-md p-6">
           <CardHeader className="space-y-1 flex flex-col items-center">
             <div className="w-12 h-12 bg-attendify-primary rounded-full flex items-center justify-center mb-4">

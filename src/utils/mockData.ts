@@ -2,58 +2,136 @@ import { Attendance, LectureData } from "@/types";
 
 // Sample lecture data
 export const LECTURES: LectureData[] = [
-  // Monday
-  { id: 'mon1', subject: 'FSD Laboratory', time: '8:30 AM - 10:00 AM', division: 'I2-2', year: 'BE' },
-  { id: 'mon2', subject: 'BDA', time: '10:00 AM - 11:00 AM', division: 'I2', year: 'BE' },
-  { id: 'mon3', subject: 'FSD Laboratory', time: '12:00 PM - 1:30 PM', division: 'I2-1', year: 'BE' },
-  { id: 'mon4', subject: 'ARVR Laboratory', time: '12:00 PM - 1:30 PM', division: 'I2-2', year: 'BE' },
-  { id: 'mon5', subject: 'IS Laboratory', time: '12:00 PM - 1:30 PM', division: 'I2-2', year: 'BE' },
-  { id: 'mon6', subject: 'ARVR Laboratory', time: '2:00 PM - 3:00 PM', division: 'I2', year: 'BE' },
-  { id: 'mon7', subject: 'IS Laboratory', time: '2:00 PM - 3:00 PM', division: 'I2', year: 'BE' },
-
-  // Tuesday
-  { id: 'tue1', subject: 'IPCV', time: '9:00 AM - 10:00 AM', division: 'I2', year: 'BE' },
-  { id: 'tue2', subject: 'SE', time: '10:00 AM - 11:00 AM', division: 'I2', year: 'BE' },
-  { id: 'tue3', subject: 'SE Laboratory', time: '12:00 PM - 1:30 PM', division: 'I2-1', year: 'BE' },
-  { id: 'tue4', subject: 'ML Laboratory', time: '12:00 PM - 1:30 PM', division: 'I2-2', year: 'BE' },
-  { id: 'tue5', subject: 'ML Laboratory', time: '2:00 PM - 4:00 PM', division: 'I2-1', year: 'BE' },
-  { id: 'tue6', subject: 'MINORS', time: '4:00 PM - 5:00 PM', division: 'I2', year: 'BE' },
-  { id: 'tue7', subject: 'HONORS', time: '4:00 PM - 5:00 PM', division: 'I2', year: 'BE' },
-
-  // Wednesday
-  { id: 'wed1', subject: 'ISIG', time: '8:30 AM - 9:30 AM', division: 'I2-2', year: 'BE' },
-  { id: 'wed2', subject: 'IPCV', time: '10:00 AM - 11:00 AM', division: 'I2', year: 'BE' },
-  { id: 'wed3', subject: 'ML', time: '11:30 AM - 12:30 PM', division: 'I2', year: 'BE' },
-  { id: 'wed4', subject: 'IPCV Laboratory', time: '12:30 PM - 2:00 PM', division: 'I2-1', year: 'BE' },
-  { id: 'wed5', subject: 'SE Laboratory', time: '12:30 PM - 2:00 PM', division: 'I2-2', year: 'BE' },
-  { id: 'wed6', subject: 'BDA', time: '2:00 PM - 3:30 PM', division: 'I2', year: 'BE' },
-  { id: 'wed7', subject: 'MINORS', time: '3:30 PM - 5:00 PM', division: 'I2', year: 'BE' },
-  { id: 'wed8', subject: 'HONORS', time: '3:30 PM - 5:00 PM', division: 'I2', year: 'BE' },
-
-  // Thursday
-  { id: 'thu1', subject: 'Innovative Product Development', time: '8:00 AM - 2:30 PM', division: 'I2', year: 'BE' },
-  { id: 'thu2', subject: 'Research/Project Work', time: '8:00 AM - 2:30 PM', division: 'I2', year: 'BE' },
-
-  // Friday
-  { id: 'fri1', subject: 'SE', time: '8:30 AM - 9:30 AM', division: 'I2', year: 'BE' },
-  { id: 'fri2', subject: 'IPCV', time: '9:30 AM - 10:30 AM', division: 'I2', year: 'BE' },
-  { id: 'fri3', subject: 'SE', time: '10:30 AM - 11:30 AM', division: 'I2', year: 'BE' },
-  { id: 'fri4', subject: 'ML', time: '12:00 PM - 1:00 PM', division: 'I2', year: 'BE' },
-  { id: 'fri5', subject: 'ISIG Laboratory', time: '1:00 PM - 2:30 PM', division: 'I2-1', year: 'BE' },
-  { id: 'fri6', subject: 'BDA Laboratory', time: '1:00 PM - 2:30 PM', division: 'I2-2', year: 'BE' },
-  { id: 'fri7', subject: 'ARVR Laboratory', time: '2:30 PM - 4:00 PM', division: 'I2', year: 'BE' },
-  { id: 'fri8', subject: 'IS Laboratory', time: '2:30 PM - 4:00 PM', division: 'I2', year: 'BE' },
-  { id: 'fri9', subject: 'ISIG', time: '2:30 PM - 4:00 PM', division: 'I2', year: 'BE' },
-
-  // Saturday
-  { id: 'sat1', subject: 'SE', time: '8:30 AM - 9:30 AM', division: 'I2', year: 'BE' },
-  { id: 'sat2', subject: 'BDA', time: '9:30 AM - 10:30 AM', division: 'I2', year: 'BE' },
-  { id: 'sat3', subject: 'BDA Laboratory', time: '10:30 AM - 11:30 AM', division: 'I2-1', year: 'BE' },
-  { id: 'sat4', subject: 'IPCV Laboratory', time: '10:30 AM - 11:30 AM', division: 'I2-2', year: 'BE' },
-  { id: 'sat5', subject: 'ML', time: '12:00 PM - 1:00 PM', division: 'I2', year: 'BE' },
-  { id: 'sat6', subject: 'ISIG', time: '1:00 PM - 2:30 PM', division: 'I2', year: 'BE' },
-  { id: 'sat7', subject: 'DEVOPS', time: '2:30 PM - 3:30 PM', division: 'I2-1', year: 'BE' },
-  { id: 'sat8', subject: 'MINORS', time: '3:30 PM - 5:30 PM', division: 'I2', year: 'BE' }
+  {
+    id: '1',
+    subject: 'IPCV',
+    time: '09:00 AM',
+    day: 'Monday',
+    room: 'Room 101',
+    professor: 'Dr. Smith',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '2',
+    subject: 'IPCV Lab',
+    time: '10:30 AM',
+    day: 'Monday',
+    room: 'Lab 101',
+    professor: 'Dr. Smith',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '3',
+    subject: 'FSD',
+    time: '01:00 PM',
+    day: 'Monday',
+    room: 'Room 102',
+    professor: 'Prof. Johnson',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '4',
+    subject: 'FSD Lab',
+    time: '02:30 PM',
+    day: 'Monday',
+    room: 'Lab 102',
+    professor: 'Prof. Johnson',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '5',
+    subject: 'ML',
+    time: '09:00 AM',
+    day: 'Tuesday',
+    room: 'Room 103',
+    professor: 'Dr. Williams',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '6',
+    subject: 'ML Lab',
+    time: '10:30 AM',
+    day: 'Tuesday',
+    room: 'Lab 103',
+    professor: 'Dr. Williams',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '7',
+    subject: 'BDA',
+    time: '01:00 PM',
+    day: 'Tuesday',
+    room: 'Room 104',
+    professor: 'Prof. Brown',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '8',
+    subject: 'BDA Lab',
+    time: '02:30 PM',
+    day: 'Tuesday',
+    room: 'Lab 104',
+    professor: 'Prof. Brown',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '9',
+    subject: 'SE',
+    time: '09:00 AM',
+    day: 'Wednesday',
+    room: 'Room 105',
+    professor: 'Dr. Davis',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '10',
+    subject: 'IS',
+    time: '10:30 AM',
+    day: 'Wednesday',
+    room: 'Room 106',
+    professor: 'Prof. Wilson',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '11',
+    subject: 'ISIG',
+    time: '01:00 PM',
+    day: 'Wednesday',
+    room: 'Room 107',
+    professor: 'Dr. Taylor',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '12',
+    subject: 'Minors',
+    time: '02:30 PM',
+    day: 'Wednesday',
+    room: 'Room 108',
+    professor: 'Prof. Anderson',
+    division: 'I1',
+    year: 'TE'
+  },
+  {
+    id: '13',
+    subject: 'Honors',
+    time: '09:00 AM',
+    day: 'Thursday',
+    room: 'Room 109',
+    professor: 'Dr. Martinez',
+    division: 'I1',
+    year: 'TE'
+  }
 ];
 
 // Sample attendance data
@@ -61,75 +139,80 @@ export const MOCK_ATTENDANCE: Attendance[] = [
   {
     id: '1',
     name: 'John Doe',
-    sapId: 'SAP001',
+    sapId: '12345678',
     rollNo: '101',
-    committee: 'Student Council',
-    division: 'A',
-    year: 'TE',
-    subject: 'Web Development',
-    lectureTime: '9:00 AM - 10:00 AM',
-    reason: 'Regular attendance',
-    date: new Date('2023-04-10T09:00:00')
+    committee: 'Technical',
+    division: 'I1',
+    year: '2024',
+    subject: 'Data Structures',
+    lectureTime: '09:00 AM',
+    reason: 'Present',
+    date: new Date('2024-03-20'),
+    status: 'present'
   },
   {
     id: '2',
     name: 'Jane Smith',
-    sapId: 'SAP002',
+    sapId: '87654321',
     rollNo: '102',
-    committee: 'Coding Club',
-    division: 'A',
-    year: 'TE',
-    subject: 'Data Structures',
-    lectureTime: '10:00 AM - 11:00 AM',
-    reason: 'Regular attendance',
-    date: new Date('2023-04-10T10:00:00')
+    committee: 'Cultural',
+    division: 'I1',
+    year: '2024',
+    subject: 'Database Management',
+    lectureTime: '10:30 AM',
+    reason: 'Present',
+    date: new Date('2024-03-20'),
+    status: 'present'
   },
   {
     id: '3',
-    name: 'Robert Johnson',
-    sapId: 'SAP003',
+    name: 'Bob Johnson',
+    sapId: '23456789',
     rollNo: '103',
-    committee: 'None',
-    division: 'B',
-    year: 'SE',
-    subject: 'Chemistry',
-    lectureTime: '11:00 AM - 12:00 PM',
-    reason: 'Regular attendance',
-    date: new Date('2023-04-10T11:00:00')
+    committee: 'Sports',
+    division: 'I1',
+    year: '2024',
+    subject: 'Cyber Security',
+    lectureTime: '01:00 PM',
+    reason: 'Absent - Medical Leave',
+    date: new Date('2024-03-20'),
+    status: 'absent'
   },
   {
     id: '4',
-    name: 'Emily Davis',
-    sapId: 'SAP004',
+    name: 'Alice Brown',
+    sapId: '98765432',
     rollNo: '104',
-    committee: 'IEEE',
-    division: 'B',
-    year: 'BE',
-    subject: 'Machine Learning',
-    lectureTime: '10:00 AM - 11:00 AM',
-    reason: 'Regular attendance',
-    date: new Date('2023-04-10T10:00:00')
+    committee: 'Technical',
+    division: 'I1',
+    year: '2024',
+    subject: 'Data Structures',
+    lectureTime: '09:00 AM',
+    reason: 'Present',
+    date: new Date('2024-03-21'),
+    status: 'present'
   },
   {
     id: '5',
-    name: 'Michael Wilson',
-    sapId: 'SAP005',
+    name: 'Charlie Wilson',
+    sapId: '34567890',
     rollNo: '105',
-    committee: 'Sports Committee',
-    division: 'A',
-    year: 'FE',
-    subject: 'Economics',
-    lectureTime: '9:00 AM - 10:00 AM',
-    reason: 'Regular attendance',
-    date: new Date('2023-04-10T09:00:00')
+    committee: 'Cultural',
+    division: 'I1',
+    year: '2024',
+    subject: 'Database Management',
+    lectureTime: '10:30 AM',
+    reason: 'Absent - Personal',
+    date: new Date('2024-03-21'),
+    status: 'absent'
   }
 ];
 
 // Available divisions
-export const DIVISIONS = ['I2-1', 'I2-2'];
+export const DIVISIONS = ['I1', 'I2', 'I3'];
 
 // Available years
-export const YEARS = ['BE'];
+export const YEARS = ['FE', 'SE', 'TE', 'BE'];
 
 // Available committees
 export const COMMITTEES = ['None', 'Student Council', 'IEEE', 'CSI', 'ACM', 'Coding Club', 'Sports Committee'];
@@ -138,7 +221,7 @@ export const COMMITTEES = ['None', 'Student Council', 'IEEE', 'CSI', 'ACM', 'Cod
 export const getFilteredLectures = (division: string, year: string): LectureData[] => {
   if (!division || !year) return [];
   return LECTURES.filter(lecture => 
-    (lecture.division === division || lecture.division === 'I2') && 
+    (lecture.division === division || lecture.division === division.split('-')[0]) && 
     lecture.year === year
   );
 };
@@ -166,3 +249,76 @@ export const getFilteredAttendance = (filters: {
     return true;
   });
 };
+
+export const ATTENDANCE: Attendance[] = [
+  {
+    id: '1',
+    sapId: '60004200001',
+    name: 'John Doe',
+    rollNo: '001',
+    committee: 'Technical',
+    division: 'I1',
+    year: 'TE',
+    subject: 'IPCV',
+    lectureTime: '09:00 AM',
+    reason: 'Present for lecture',
+    date: new Date('2024-03-20'),
+    status: 'present'
+  },
+  {
+    id: '2',
+    sapId: '60004200002',
+    name: 'Jane Smith',
+    rollNo: '002',
+    committee: 'Cultural',
+    division: 'I2',
+    year: 'TE',
+    subject: 'FSD',
+    lectureTime: '10:30 AM',
+    reason: 'Present for lecture',
+    date: new Date('2024-03-20'),
+    status: 'present'
+  },
+  {
+    id: '3',
+    sapId: '60004200003',
+    name: 'Bob Johnson',
+    rollNo: '003',
+    committee: 'Sports',
+    division: 'I3',
+    year: 'TE',
+    subject: 'ML',
+    lectureTime: '12:00 PM',
+    reason: 'Present for lecture',
+    date: new Date('2024-03-20'),
+    status: 'present'
+  },
+  {
+    id: '4',
+    sapId: '60004200004',
+    name: 'Alice Brown',
+    rollNo: '004',
+    committee: 'Technical',
+    division: 'I4',
+    year: '2021',
+    subject: 'Data Structures',
+    lectureTime: '09:00 AM',
+    reason: 'Present for lecture',
+    date: new Date('2024-03-20'),
+    status: 'present'
+  },
+  {
+    id: '5',
+    sapId: '60004200005',
+    name: 'Charlie Wilson',
+    rollNo: '005',
+    committee: 'Cultural',
+    division: 'I5',
+    year: '2024',
+    subject: 'Database Management',
+    lectureTime: '10:30 AM',
+    reason: 'Present for lecture',
+    date: new Date('2024-03-20'),
+    status: 'present'
+  }
+];

@@ -6,6 +6,9 @@ import TimeTableView from '@/components/student/TimeTableView';
 import AttendanceForm from '@/components/student/AttendanceForm';
 import { studentApi } from '@/services/api';
 import { useNavigate } from 'react-router-dom';
+import FilterControls from '@/components/teacher/FilterControls';
+import AttendanceTable from '@/components/teacher/AttendanceTable';
+import { exportToExcel } from '@/utils/excelExport';
 
 const StudentPage = () => {
   const navigate = useNavigate();
@@ -40,7 +43,6 @@ const StudentPage = () => {
 
     try {
       setIsSubmitting(true);
-      // Submit attendance for all selected lectures
       await Promise.all(selectedLectures.map(lecture => 
         studentApi.markAttendance({
           ...data,
@@ -71,7 +73,7 @@ const StudentPage = () => {
       time: '9:00 AM - 10:00 AM',
       day: 'Monday',
       room: '301',
-      division: 'I2',
+      division: 'I1',
       year: 'BE'
     },
     {
@@ -91,7 +93,7 @@ const StudentPage = () => {
       time: '11:00 AM - 12:00 PM',
       day: 'Monday',
       room: '303',
-      division: 'I2',
+      division: 'I3',
       year: 'BE'
     },
     // Tuesday
@@ -102,7 +104,7 @@ const StudentPage = () => {
       time: '9:00 AM - 10:00 AM',
       day: 'Tuesday',
       room: '304',
-      division: 'I2',
+      division: 'I4',
       year: 'BE'
     },
     {
@@ -112,7 +114,7 @@ const StudentPage = () => {
       time: '10:00 AM - 11:00 AM',
       day: 'Tuesday',
       room: '305',
-      division: 'I2',
+      division: 'I5',
       year: 'BE'
     },
     {
@@ -122,7 +124,7 @@ const StudentPage = () => {
       time: '2:00 PM - 3:00 PM',
       day: 'Tuesday',
       room: '306',
-      division: 'I2',
+      division: 'I6',
       year: 'BE'
     },
     // Wednesday
@@ -133,7 +135,7 @@ const StudentPage = () => {
       time: '9:00 AM - 10:00 AM',
       day: 'Wednesday',
       room: '303',
-      division: 'I2',
+      division: 'I1',
       year: 'BE'
     },
     {
@@ -153,7 +155,7 @@ const StudentPage = () => {
       time: '2:00 PM - 3:00 PM',
       day: 'Wednesday',
       room: '307',
-      division: 'I2',
+      division: 'I3',
       year: 'BE'
     },
     // Thursday
@@ -164,7 +166,7 @@ const StudentPage = () => {
       time: '10:00 AM - 11:00 AM',
       day: 'Thursday',
       room: '304',
-      division: 'I2',
+      division: 'I4',
       year: 'BE'
     },
     {
@@ -174,7 +176,7 @@ const StudentPage = () => {
       time: '11:00 AM - 12:00 PM',
       day: 'Thursday',
       room: '302',
-      division: 'I2',
+      division: 'I5',
       year: 'BE'
     },
     {
@@ -184,7 +186,7 @@ const StudentPage = () => {
       time: '3:00 PM - 4:00 PM',
       day: 'Thursday',
       room: '306',
-      division: 'I2',
+      division: 'I6',
       year: 'BE'
     },
     // Friday
@@ -195,7 +197,7 @@ const StudentPage = () => {
       time: '9:00 AM - 10:00 AM',
       day: 'Friday',
       room: '305',
-      division: 'I2',
+      division: 'I1',
       year: 'BE'
     },
     {
@@ -215,7 +217,7 @@ const StudentPage = () => {
       time: '3:00 PM - 4:00 PM',
       day: 'Friday',
       room: '302',
-      division: 'I2',
+      division: 'I3',
       year: 'BE'
     }
   ];

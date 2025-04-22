@@ -74,6 +74,7 @@ export const teacherApi = {
     subject?: string;
     division?: string;
     year?: string;
+    lectureTime?: string;
   }) => {
     try {
       const response = await api.get('/teacher/attendance', { params: filters });

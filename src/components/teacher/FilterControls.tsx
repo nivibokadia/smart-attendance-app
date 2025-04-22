@@ -9,6 +9,7 @@ interface FilterControlsProps {
     subject?: string;
     division?: string;
     year?: string;
+    lectureTime?: string;
   }) => void;
 }
 
@@ -17,9 +18,17 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onFilter }) => {
   const [subject, setSubject] = useState<string>('');
   const [division, setDivision] = useState<string>('');
   const [year, setYear] = useState<string>('');
+  const [lectureTime, setLectureTime] = useState<string>('');
 
   // Extract unique subjects from the lectures data
   const subjects = Array.from(new Set(LECTURES.map(lecture => lecture.subject)));
+
+  // Get lecture times for selected subject
+  const lectureTimes = subject
+    ? Array.from(new Set(LECTURES
+        .filter(lecture => lecture.subject === subject)
+        .map(lecture => lecture.time)))
+    : [];
 
   const handleApplyFilters = () => {
     try {
@@ -37,6 +46,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onFilter }) => {
       if (subject) filters.subject = subject;
       if (division) filters.division = division;
       if (year) filters.year = year;
+      if (lectureTime) filters.lectureTime = lectureTime;
 
       onFilter(filters);
     } catch (error) {
@@ -50,6 +60,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onFilter }) => {
     setSubject('');
     setDivision('');
     setYear('');
+    setLectureTime('');
     onFilter({});
   };
 
@@ -75,11 +86,30 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onFilter }) => {
             id="subject-filter"
             className="attendify-select"
             value={subject}
-            onChange={(e) => setSubject(e.target.value)}
+            onChange={(e) => {
+              setSubject(e.target.value);
+              setLectureTime(''); // Reset lecture time when subject changes
+            }}
           >
             <option value="">All Subjects</option>
             {subjects.map((subj) => (
               <option key={subj} value={subj}>{subj}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="lecture-time-filter" className="attendify-label">Lecture Time</label>
+          <select
+            id="lecture-time-filter"
+            className="attendify-select"
+            value={lectureTime}
+            onChange={(e) => setLectureTime(e.target.value)}
+            disabled={!subject}
+          >
+            <option value="">All Times</option>
+            {lectureTimes.map((time) => (
+              <option key={time} value={time}>{time}</option>
             ))}
           </select>
         </div>

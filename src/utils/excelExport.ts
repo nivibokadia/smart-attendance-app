@@ -1,11 +1,15 @@
-
-import { Attendance } from '@/types';
+import { Attendance, GroupedAttendance } from '@/types';
 import * as XLSX from 'xlsx';
 
-export function exportToExcel(attendanceData: Attendance[], fileName: string = 'attendance-report'): void {
+export const exportToExcel = (data: Attendance[] | GroupedAttendance[], filename: string) => {
+  // If data is GroupedAttendance[], flatten it
+  const flattenedData = Array.isArray(data) && data.length > 0 && 'students' in data[0]
+    ? data.flatMap(group => group.students)
+    : data as Attendance[];
+
   // Create a worksheet
   const worksheet = XLSX.utils.json_to_sheet(
-    attendanceData.map(({ name, sapId, rollNo, division, year, subject, lectureTime, reason, date }) => ({
+    flattenedData.map(({ name, sapId, rollNo, division, year, subject, lectureTime, reason, date }) => ({
       'Roll No.': rollNo,
       'Name': name,
       'SAP ID': sapId,
@@ -37,5 +41,5 @@ export function exportToExcel(attendanceData: Attendance[], fileName: string = '
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendance');
 
   // Generate Excel file
-  XLSX.writeFile(workbook, `${fileName}.xlsx`);
-}
+  XLSX.writeFile(workbook, `${filename}.xlsx`);
+};

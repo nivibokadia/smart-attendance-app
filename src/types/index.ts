@@ -13,17 +13,25 @@ export interface Attendance extends Student {
   lectureTime: string;
   date: Date;
   id?: string;
+  status: 'present' | 'absent';
+  weekday?: string;
 }
 
 export interface LectureData {
   id: string;
   subject: string;
-  professor: string;
   time: string;
   day: string;
   room: string;
+  professor: string;
   division: string;
   year: string;
+}
+
+export interface GroupedAttendance {
+  subject: string;
+  lectureTime: string;
+  students: Attendance[];
 }
 
 export type DivisionType = 'A' | 'B' | 'C' | 'D';

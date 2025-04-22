@@ -38,47 +38,47 @@ const TimeTableView: React.FC<TimeTableViewProps> = ({
           {/* Header Row */}
           <div className="h-16 flex items-center justify-center font-medium text-gray-500 border-b bg-gray-50">
             Time
-          </div>
+        </div>
           {DAYS_OF_WEEK.map((day) => (
             <div
               key={day}
               className="h-16 flex items-center justify-center font-semibold text-gray-700 border-b bg-gray-50"
             >
-              {day}
-            </div>
-          ))}
+                  {day}
+                </div>
+              ))}
 
           {/* Time Slots */}
           {TIME_SLOTS.map((timeSlot) => (
-            <React.Fragment key={timeSlot}>
+                <React.Fragment key={timeSlot}>
               <div className="h-28 flex items-center justify-center text-sm font-medium text-gray-600 border-b px-2 bg-gray-50">
                 {timeSlot}
               </div>
               {DAYS_OF_WEEK.map((day) => {
                 const lecturesInSlot = getLecturesForTimeAndDay(timeSlot, day);
-                return (
+                        return (
                   <div
                     key={`${day}-${timeSlot}`}
                     className="h-28 border-b border-l p-1.5 hover:bg-gray-50 transition-colors duration-150"
                   >
                     {lecturesInSlot.map((lecture) => (
-                      <TimetableCell
+                          <TimetableCell
                         key={lecture.id}
-                        lecture={lecture}
+                            lecture={lecture}
                         isSelected={selectedLectures.some(
                           (selected) => selected.id === lecture.id
                         )}
                         onClick={() => onLectureSelect(lecture)}
-                      />
+                          />
                     ))}
-                  </div>
+                    </div>
                 );
               })}
-            </React.Fragment>
-          ))}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
   );
 };
 

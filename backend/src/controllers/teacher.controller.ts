@@ -8,7 +8,7 @@ import ExcelJS from 'exceljs';
 // @access  Private (Teacher)
 export const getAttendance = async (req: Request, res: Response) => {
   try {
-    const { date, subject, division, year } = req.query;
+    const { date, subject, division, year, lectureTime } = req.query;
     
     const query: any = {};
     
@@ -23,14 +23,43 @@ export const getAttendance = async (req: Request, res: Response) => {
     if (subject) query.subject = subject;
     if (division) query.division = division;
     if (year) query.year = year;
-
-    console.log('Query:', query); // Add logging to debug
+    if (lectureTime) query.lectureTime = lectureTime;
 
     const attendance = await Attendance.find(query)
-      .sort({ date: -1 })
-      .populate('studentId', 'name sapId rollNo division');
+      .sort({ date: -1, lectureTime: 1, rollNo: 1 });
 
-    res.json(attendance);
+    const getWeekday = (date: Date) => {
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      return days[new Date(date).getDay()];
+    };
+
+    // Group attendance by lecture time and subject
+    const groupedAttendance = attendance.reduce((acc: any, record: any) => {
+      const key = `${record.subject}-${record.lectureTime}`;
+      if (!acc[key]) {
+        acc[key] = {
+          subject: record.subject,
+          lectureTime: record.lectureTime,
+          students: []
+        };
+      }
+      acc[key].students.push({
+        id: record._id,
+        name: record.name,
+        sapId: record.sapId,
+        rollNo: record.rollNo,
+        division: record.division,
+        year: record.year,
+        subject: record.subject,
+        lectureTime: record.lectureTime,
+        date: record.date,
+        weekday: getWeekday(record.date),
+        status: record.status
+      });
+      return acc;
+    }, {});
+
+    res.json(Object.values(groupedAttendance));
   } catch (error) {
     console.error('Error in getAttendance:', error);
     res.status(400).json({ message: 'Error fetching attendance records' });

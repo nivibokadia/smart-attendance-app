@@ -30,7 +30,15 @@ const TeacherPage = () => {
       if (filters?.year) params.year = filters.year;
 
       const data = await teacherApi.getAttendance(params);
-      setAttendanceData(data);
+      // Flatten the grouped data to get individual records
+      const flattenedData = data.flatMap((group: any) => 
+        group.students.map((student: any) => ({
+          ...student,
+          subject: group.subject,
+          lectureTime: group.lectureTime
+        }))
+      );
+      setAttendanceData(flattenedData);
     } catch (error) {
       toast.error('Failed to fetch attendance data');
       console.error('Error fetching attendance:', error);
@@ -74,9 +82,14 @@ const TeacherPage = () => {
   return (
     <MainLayout>
       <div className="max-w-[1400px] mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center text-attendify-primary">
-          Teacher Dashboard
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-attendify-primary">
+            Teacher Dashboard
+          </h1>
+          <p className="text-sm text-gray-500">
+            DJSCE IT
+          </p>
+        </div>
 
         <div className="space-y-8">
           {/* Stats Overview */}
@@ -90,10 +103,10 @@ const TeacherPage = () => {
                   {stat.subject} - {stat.division}
                 </h3>
                 <div className="text-3xl font-bold text-attendify-primary">
-                  {stat.attendancePercentage.toFixed(1)}%
+                  {stat.totalAttendance}
                 </div>
                 <p className="text-sm text-gray-500 mt-1">
-                  {stat.presentCount} / {stat.totalAttendance} present
+                  Total Entries
                 </p>
               </div>
             ))}
