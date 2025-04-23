@@ -39,6 +39,45 @@ api.interceptors.response.use(
   }
 );
 
+export const authApi = {
+  login: async (email: string, password: string, role: string) => {
+    try {
+      const response = await api.post('/auth/login', { email, password, role });
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userRole', response.data.role);
+      }
+      return response.data;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  },
+
+  register: async (userData: {
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    studentId?: string;
+    rollNo?: string;
+    department?: string;
+    phoneNumber?: string;
+  }) => {
+    try {
+      const response = await api.post('/auth/register', userData);
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userRole', response.data.role);
+      }
+      return response.data;
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
+  }
+};
+
 export const studentApi = {
   markAttendance: async (data: Student & { subject: string; lectureTime: string }) => {
     try {
