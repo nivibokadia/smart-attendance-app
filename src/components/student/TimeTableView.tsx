@@ -1,18 +1,5 @@
 import React from 'react';
 import { LectureData } from '@/types';
-import TimetableCell from './TimetableCell';
-
-const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-const TIME_SLOTS = [
-  '9:00 AM - 10:00 AM',
-  '10:00 AM - 11:00 AM',
-  '11:00 AM - 12:00 PM',
-  '12:00 PM - 1:00 PM',
-  '1:00 PM - 2:00 PM',
-  '2:00 PM - 3:00 PM',
-  '3:00 PM - 4:00 PM',
-  '4:00 PM - 5:00 PM',
-];
 
 interface TimeTableViewProps {
   lectures: LectureData[];
@@ -20,65 +7,66 @@ interface TimeTableViewProps {
   onLectureSelect: (lecture: LectureData) => void;
 }
 
-const TimeTableView: React.FC<TimeTableViewProps> = ({
-  lectures,
-  selectedLectures,
-  onLectureSelect,
-}) => {
-  const getLecturesForTimeAndDay = (time: string, day: string) => {
-    return lectures.filter(
-      (lecture) => lecture.time === time && lecture.day === day
-    );
-  };
+const TimeTableView = ({ lectures, selectedLectures, onLectureSelect }: TimeTableViewProps) => {
+  // Group lectures by date
+  const lecturesByDate = lectures.reduce((acc, lecture) => {
+    if (!acc[lecture.date]) {
+      acc[lecture.date] = [];
+    }
+    acc[lecture.date].push(lecture);
+    return acc;
+  }, {} as Record<string, LectureData[]>);
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-sm">
-      <div className="min-w-[900px] lg:min-w-full">
-        <div className="grid grid-cols-[100px_repeat(5,1fr)]">
-          {/* Header Row */}
-          <div className="h-16 flex items-center justify-center font-medium text-gray-500 border-b bg-gray-50">
-            Time
-        </div>
-          {DAYS_OF_WEEK.map((day) => (
-            <div
-              key={day}
-              className="h-16 flex items-center justify-center font-semibold text-gray-700 border-b bg-gray-50"
-            >
-                  {day}
-                </div>
-              ))}
-
-          {/* Time Slots */}
-          {TIME_SLOTS.map((timeSlot) => (
-                <React.Fragment key={timeSlot}>
-              <div className="h-28 flex items-center justify-center text-sm font-medium text-gray-600 border-b px-2 bg-gray-50">
-                {timeSlot}
-              </div>
-              {DAYS_OF_WEEK.map((day) => {
-                const lecturesInSlot = getLecturesForTimeAndDay(timeSlot, day);
-                        return (
-                  <div
-                    key={`${day}-${timeSlot}`}
-                    className="h-28 border-b border-l p-1.5 hover:bg-gray-50 transition-colors duration-150"
-                  >
-                    {lecturesInSlot.map((lecture) => (
-                          <TimetableCell
-                        key={lecture._id}
-                            lecture={lecture}
-                        isSelected={selectedLectures.some(
-                          (selected) => selected._id === lecture._id
-                        )}
-                        onClick={() => onLectureSelect(lecture)}
-                          />
-                    ))}
-                    </div>
-                );
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-xl font-semibold mb-4">Time Table</h2>
+      <div className="space-y-6">
+        {Object.entries(lecturesByDate).map(([date, dateLectures]) => (
+          <div key={date} className="border rounded-lg p-4">
+            <h3 className="text-lg font-medium mb-3">
+              {new Date(date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
               })}
-                </React.Fragment>
+            </h3>
+            <div className="grid gap-4">
+              {dateLectures.map((lecture) => (
+                <div
+                  key={lecture._id}
+                  className={`p-4 rounded-lg border cursor-pointer transition-colors ${
+                    selectedLectures.some(l => l._id === lecture._id)
+                      ? 'bg-attendify-primary/10 border-attendify-primary'
+                      : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => onLectureSelect(lecture)}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-medium">{lecture.subject}</h4>
+                      <p className="text-sm text-gray-600">{lecture.professor}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium">{lecture.time}</p>
+                      <p className="text-xs text-gray-500">{lecture.room}</p>
+                    </div>
+                  </div>
+                  <div className="mt-2 flex gap-2">
+                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                      {lecture.division}
+                    </span>
+                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                      {lecture.year}
+                    </span>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-        </div>
+        ))}
+      </div>
+    </div>
   );
 };
 

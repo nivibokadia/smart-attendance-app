@@ -31,10 +31,10 @@ export interface Attendance {
 export interface LectureData {
   _id: string;
   subject: string;
-  time: string;
-  day: string;
-  room: string;
   professor: string;
+  time: string;
+  date: string;
+  room: string;
   division: string;
   year: string;
   createdAt?: string;

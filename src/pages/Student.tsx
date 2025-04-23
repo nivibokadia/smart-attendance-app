@@ -124,7 +124,7 @@ const StudentPage = () => {
       subject: 'IPCV',
       professor: 'Dr. Sarah Parker',
       time: '9:00 AM - 10:00 AM',
-      day: 'Monday',
+      date: '2025-04-25',
       room: '301',
       division: 'I1',
       year: 'BE'
@@ -134,7 +134,7 @@ const StudentPage = () => {
       subject: 'FSD',
       professor: 'Prof. James Wilson',
       time: '10:00 AM - 11:00 AM',
-      day: 'Monday',
+      date: '2025-04-25',
       room: '302',
       division: 'I2',
       year: 'BE'
@@ -144,7 +144,7 @@ const StudentPage = () => {
       subject: 'BDA',
       professor: 'Dr. Michael Chen',
       time: '11:00 AM - 12:00 PM',
-      day: 'Monday',
+      date: '2025-04-25',
       room: '303',
       division: 'I3',
       year: 'BE'
@@ -155,7 +155,7 @@ const StudentPage = () => {
       subject: 'ML',
       professor: 'Dr. Emily Brooks',
       time: '9:00 AM - 10:00 AM',
-      day: 'Tuesday',
+      date: '2025-04-26',
       room: '304',
       division: 'I1',
       year: 'BE'
@@ -165,7 +165,7 @@ const StudentPage = () => {
       subject: 'SE',
       professor: 'Prof. Robert Taylor',
       time: '10:00 AM - 11:00 AM',
-      day: 'Tuesday',
+      date: '2025-04-26',
       room: '305',
       division: 'I1',
       year: 'BE'
@@ -175,7 +175,7 @@ const StudentPage = () => {
       subject: 'Honours',
       professor: 'Dr. Lisa Anderson',
       time: '2:00 PM - 3:00 PM',
-      day: 'Tuesday',
+      date: '2025-04-26',
       room: '306',
       division: 'I1',
       year: 'BE'
@@ -186,7 +186,7 @@ const StudentPage = () => {
       subject: 'BDA',
       professor: 'Dr. Michael Chen',
       time: '9:00 AM - 10:00 AM',
-      day: 'Wednesday',
+      date: '2025-04-27',
       room: '303',
       division: 'I1',
       year: 'BE'
@@ -196,7 +196,7 @@ const StudentPage = () => {
       subject: 'IPCV',
       professor: 'Dr. Sarah Parker',
       time: '11:00 AM - 12:00 PM',
-      day: 'Wednesday',
+      date: '2025-04-27',
       room: '301',
       division: 'I2',
       year: 'BE'
@@ -206,7 +206,7 @@ const StudentPage = () => {
       subject: 'Minors',
       professor: 'Prof. David Kumar',
       time: '2:00 PM - 3:00 PM',
-      day: 'Wednesday',
+      date: '2025-04-27',
       room: '307',
       division: 'I3',
       year: 'BE'
@@ -217,7 +217,7 @@ const StudentPage = () => {
       subject: 'ML',
       professor: 'Dr. Emily Brooks',
       time: '10:00 AM - 11:00 AM',
-      day: 'Thursday',
+      date: '2025-04-28',
       room: '304',
       division: 'I1',
       year: 'BE'
@@ -227,7 +227,7 @@ const StudentPage = () => {
       subject: 'FSD',
       professor: 'Prof. James Wilson',
       time: '11:00 AM - 12:00 PM',
-      day: 'Thursday',
+      date: '2025-04-28',
       room: '302',
       division: 'I2',
       year: 'BE'
@@ -237,7 +237,7 @@ const StudentPage = () => {
       subject: 'Honours',
       professor: 'Dr. Lisa Anderson',
       time: '3:00 PM - 4:00 PM',
-      day: 'Thursday',
+      date: '2025-04-28',
       room: '306',
       division: 'I3',
       year: 'BE'
@@ -248,7 +248,7 @@ const StudentPage = () => {
       subject: 'SE',
       professor: 'Prof. Robert Taylor',
       time: '9:00 AM - 10:00 AM',
-      day: 'Friday',
+      date: '2025-04-29',
       room: '305',
       division: 'I1',
       year: 'BE'
@@ -258,7 +258,7 @@ const StudentPage = () => {
       subject: 'Minors',
       professor: 'Prof. David Kumar',
       time: '1:00 PM - 2:00 PM',
-      day: 'Friday',
+      date: '2025-04-29',
       room: '307',
       division: 'I2',
       year: 'BE'
@@ -268,9 +268,41 @@ const StudentPage = () => {
       subject: 'FSD',
       professor: 'Prof. James Wilson',
       time: '3:00 PM - 4:00 PM',
-      day: 'Friday',
+      date: '2025-04-29',
       room: '302',
       division: 'I3',
+      year: 'BE'
+    },
+    // Saturday
+    {
+      _id: '16',
+      subject: 'IPCV',
+      professor: 'Dr. Sarah Parker',
+      time: '9:00 AM - 10:00 AM',
+      date: '2025-04-30',
+      room: '301',
+      division: 'I1',
+      year: 'BE'
+    },
+    {
+      _id: '17',
+      subject: 'ML',
+      professor: 'Dr. Emily Brooks',
+      time: '11:00 AM - 12:00 PM',
+      date: '2025-04-30',
+      room: '304',
+      division: 'I2',
+      year: 'BE'
+    },
+    // Sunday
+    {
+      _id: '18',
+      subject: 'BDA',
+      professor: 'Dr. Michael Chen',
+      time: '2:00 PM - 3:00 PM',
+      date: '2025-05-01',
+      room: '303',
+      division: 'I1',
       year: 'BE'
     }
   ];

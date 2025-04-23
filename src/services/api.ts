@@ -1,10 +1,13 @@
 import axios from 'axios';
 import { Student, Attendance } from '@/types';
 
+const baseURL = import.meta.env.PROD
+  ? 'https://smart-attendance-app-backend.onrender.com/api'
+  : 'http://localhost:3000/api';
+
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' 
-    ? 'https://smart-attendance-app-backend.onrender.com/api'
-    : 'http://localhost:3000/api',
+  baseURL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },

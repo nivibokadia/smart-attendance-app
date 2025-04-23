@@ -19,7 +19,7 @@ app.use(cors({
     'http://localhost:8080',
     'http://localhost:5173', // Vite default port
     'https://smart-attendance-app.vercel.app', // Vercel frontend
-    'https://smart-attendance-app.netlify.app' // Netlify frontend
+    'https://smart-attendance-app.onrender.com' // Render frontend
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
