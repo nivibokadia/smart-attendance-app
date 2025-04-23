@@ -10,13 +10,14 @@ import studentRoutes from './routes/student.routes';
 import teacherRoutes from './routes/teacher.routes';
 
 const app: Express = express();
-const PORT = 3000; // Changed to port 3000 to avoid conflicts
+const PORT: number = parseInt(process.env.PORT || '3000', 10);
 
 // Middleware
 app.use(cors({
   origin: [
     'http://localhost:5173', // Local development
-    'https://smart-attendance-app.vercel.app' // Your Vercel frontend URL
+    'https://smart-attendance-app.vercel.app', // Your Vercel frontend URL
+    'https://smart-attendance-app.netlify.app' // Your Netlify frontend URL
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -49,7 +50,7 @@ const connectDB = async () => {
     console.log('Connected to MongoDB Atlas');
     
     // Start server only after successful DB connection
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
