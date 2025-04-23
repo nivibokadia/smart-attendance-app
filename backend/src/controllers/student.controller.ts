@@ -12,17 +12,24 @@ interface AuthRequest extends Request {
 export const markAttendance = async (req: AuthRequest, res: Response) => {
   try {
     console.log('Received attendance data:', req.body);
-    const { subject, lectureTime, name } = req.body;
+    console.log('Authenticated user:', req.user);
     
-    if (!subject || !lectureTime) {
+    const { subject, lectureTime, name, sapId, rollNo, division, year } = req.body;
+    
+    // Validate required fields
+    const requiredFields = ['subject', 'lectureTime', 'name', 'sapId', 'rollNo', 'division', 'year'];
+    const missingFields = requiredFields.filter(field => !req.body[field]);
+    
+    if (missingFields.length > 0) {
       return res.status(400).json({ 
         message: 'Missing required fields',
+        missingFields,
         received: req.body 
       });
     }
 
     // Check if the submitted name matches the authenticated user's name
-    if (name && name !== req.user.name) {
+    if (name !== req.user.name) {
       return res.status(403).json({
         message: 'You can only mark attendance for yourself. Please use your registered name.',
         submittedName: name,
@@ -30,19 +37,32 @@ export const markAttendance = async (req: AuthRequest, res: Response) => {
       });
     }
 
+    // Check if SAP ID matches
+    if (sapId !== req.user.studentId) {
+      return res.status(403).json({
+        message: 'Invalid SAP ID. Please use your registered SAP ID.',
+        submittedSapId: sapId,
+        registeredSapId: req.user.studentId
+      });
+    }
+
     const date = new Date();
+    // Get the weekday name
+    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const weekday = weekdays[date.getDay()];
 
     const attendance = await Attendance.create({
       studentId: req.user._id,
       subject,
       lectureTime,
       date,
+      weekday,
       status: 'present',
-      name: req.user.name, // Always use the authenticated user's name
+      name: req.user.name,
       sapId: req.user.studentId,
-      rollNo: req.body.rollNo,
-      division: req.body.division,
-      year: req.body.year
+      rollNo,
+      division,
+      year
     });
 
     console.log('Created attendance:', attendance);
@@ -51,7 +71,8 @@ export const markAttendance = async (req: AuthRequest, res: Response) => {
     console.error('Error marking attendance:', error);
     res.status(400).json({ 
       message: 'Error marking attendance',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
+      details: error instanceof Error ? error.stack : undefined
     });
   }
 };

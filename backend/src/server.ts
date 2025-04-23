@@ -15,9 +15,11 @@ const PORT: number = parseInt(process.env.PORT || '3000', 10);
 // Middleware
 app.use(cors({
   origin: [
-    'http://localhost:5173', // Local development
-    'https://smart-attendance-app.vercel.app', // Your Vercel frontend URL
-    'https://smart-attendance-app.netlify.app' // Your Netlify frontend URL
+    'http://localhost:8081', // Local development frontend
+    'http://localhost:8080',
+    'http://localhost:5173', // Vite default port
+    'https://smart-attendance-app.vercel.app', // Vercel frontend
+    'https://smart-attendance-app.netlify.app' // Netlify frontend
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

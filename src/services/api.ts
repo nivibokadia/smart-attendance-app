@@ -86,14 +86,32 @@ export const studentApi = {
         throw new Error('No authentication token found');
       }
 
+      // Log the request data for debugging
+      console.log('Sending attendance data:', {
+        ...data,
+        division: data.division,
+        year: data.year,
+        token: token.substring(0, 10) + '...' // Log partial token for security
+      });
+
       const response = await api.post('/student/attendance', {
         ...data,
-        division: 'I2', // Default division
-        year: 'BE' // Default year
+        division: data.division,
+        year: data.year
       });
       return response.data;
-    } catch (error) {
-      console.error('Error marking attendance:', error);
+    } catch (error: any) {
+      // Enhanced error logging
+      console.error('Error marking attendance:', {
+        error: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        requestData: {
+          ...data,
+          division: data.division,
+          year: data.year
+        }
+      });
       throw error;
     }
   },

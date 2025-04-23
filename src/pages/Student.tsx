@@ -41,26 +41,75 @@ const StudentPage = () => {
       return;
     }
 
+    // Validate required fields
+    if (!data.name || !data.sapId || !data.rollNo) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
+      
+      // Get user data from localStorage
+      const userName = localStorage.getItem('userName');
+      const userSapId = localStorage.getItem('userSapId');
+      const userRollNo = localStorage.getItem('userRollNo');
+      
+      // Log the data being sent
+      console.log('Submitting attendance with data:', {
+        ...data,
+        userName,
+        userSapId,
+        userRollNo,
+        selectedLectures
+      });
+
       await Promise.all(selectedLectures.map(lecture => 
         studentApi.markAttendance({
           ...data,
           subject: lecture.subject,
           lectureTime: lecture.time,
           division: lecture.division,
-          year: lecture.year
+          year: lecture.year,
+          // Use stored user data if available
+          name: userName || data.name,
+          sapId: userSapId || data.sapId,
+          rollNo: userRollNo || data.rollNo
         })
       ));
       
       toast.success("Attendance submitted successfully!");
       setSelectedLectures([]);
     } catch (error: any) {
-      console.error('Error submitting attendance:', error);
-      if (error.response?.data?.message?.includes('can only mark attendance for yourself')) {
-        toast.error('You can only mark attendance using your registered name. Please use your correct name.');
+      // Enhanced error logging
+      console.error('Error submitting attendance:', {
+        error: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        requestData: {
+          ...data,
+          selectedLectures
+        }
+      });
+      
+      // Improved error handling
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        if (errorData.message) {
+          if (errorData.message.includes('can only mark attendance for yourself')) {
+            toast.error('You can only mark attendance using your registered name. Please use your correct name.');
+          } else if (errorData.missingFields) {
+            toast.error(`Missing required fields: ${errorData.missingFields.join(', ')}`);
+          } else {
+            toast.error(errorData.message);
+          }
+        } else if (errorData.error) {
+          toast.error(errorData.error);
+        }
+      } else if (error.message) {
+        toast.error(`Error: ${error.message}`);
       } else {
-        toast.error(error.response?.data?.message || "Failed to submit attendance. Please try again.");
+        toast.error("Failed to submit attendance. Please try again.");
       }
     } finally {
       setIsSubmitting(false);
