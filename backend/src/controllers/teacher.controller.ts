@@ -28,11 +28,6 @@ export const getAttendance = async (req: Request, res: Response) => {
     const attendance = await Attendance.find(query)
       .sort({ date: -1, lectureTime: 1, rollNo: 1 });
 
-    const getWeekday = (date: Date) => {
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      return days[new Date(date).getDay()];
-    };
-
     // Group attendance by lecture time and subject
     const groupedAttendance = attendance.reduce((acc: any, record: any) => {
       const key = `${record.subject}-${record.lectureTime}`;
@@ -53,7 +48,6 @@ export const getAttendance = async (req: Request, res: Response) => {
         subject: record.subject,
         lectureTime: record.lectureTime,
         date: record.date,
-        weekday: getWeekday(record.date),
         status: record.status
       });
       return acc;
@@ -124,15 +118,16 @@ export const downloadAttendance = async (req: Request, res: Response) => {
       { header: 'Subject', key: 'subject', width: 15 }
     ];
 
-    // Get all attendance records
+    // Get all attendance records with populated student data
     const attendance = await Attendance.find()
-      .populate('studentId', 'name studentId');
+      .populate('studentId', 'studentId name');
 
     // Add rows
     attendance.forEach(record => {
+      const student = record.studentId as any; // Type assertion since we know the populated structure
       worksheet.addRow({
-        studentId: record.studentId.studentId,
-        studentName: record.studentId.name,
+        studentId: student.studentId,
+        studentName: student.name,
         date: record.date.toLocaleDateString(),
         status: record.status,
         subject: record.subject

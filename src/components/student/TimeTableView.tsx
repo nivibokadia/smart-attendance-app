@@ -63,10 +63,10 @@ const TimeTableView: React.FC<TimeTableViewProps> = ({
                   >
                     {lecturesInSlot.map((lecture) => (
                           <TimetableCell
-                        key={lecture.id}
+                        key={lecture._id}
                             lecture={lecture}
                         isSelected={selectedLectures.some(
-                          (selected) => selected.id === lecture.id
+                          (selected) => selected._id === lecture._id
                         )}
                         onClick={() => onLectureSelect(lecture)}
                           />

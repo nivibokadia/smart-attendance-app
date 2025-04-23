@@ -12,7 +12,7 @@ interface AuthRequest extends Request {
 export const markAttendance = async (req: AuthRequest, res: Response) => {
   try {
     console.log('Received attendance data:', req.body);
-    const { subject, lectureTime } = req.body;
+    const { subject, lectureTime, name } = req.body;
     
     if (!subject || !lectureTime) {
       return res.status(400).json({ 
@@ -21,13 +21,24 @@ export const markAttendance = async (req: AuthRequest, res: Response) => {
       });
     }
 
+    // Check if the submitted name matches the authenticated user's name
+    if (name && name !== req.user.name) {
+      return res.status(403).json({
+        message: 'You can only mark attendance for yourself. Please use your registered name.',
+        submittedName: name,
+        registeredName: req.user.name
+      });
+    }
+
+    const date = new Date();
+
     const attendance = await Attendance.create({
       studentId: req.user._id,
       subject,
       lectureTime,
-      date: new Date(),
+      date,
       status: 'present',
-      name: req.user.name,
+      name: req.user.name, // Always use the authenticated user's name
       sapId: req.user.studentId,
       rollNo: req.body.rollNo,
       division: req.body.division,

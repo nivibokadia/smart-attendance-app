@@ -27,9 +27,9 @@ const StudentPage = () => {
 
   const handleSelectLecture = (lecture: LectureData) => {
     setSelectedLectures(prev => {
-      const isAlreadySelected = prev.some(l => l.id === lecture.id);
+      const isAlreadySelected = prev.some(l => l._id === lecture._id);
       if (isAlreadySelected) {
-        return prev.filter(l => l.id !== lecture.id);
+        return prev.filter(l => l._id !== lecture._id);
       }
       return [...prev, lecture];
     });
@@ -57,7 +57,11 @@ const StudentPage = () => {
       setSelectedLectures([]);
     } catch (error: any) {
       console.error('Error submitting attendance:', error);
-      toast.error(error.response?.data?.message || "Failed to submit attendance. Please try again.");
+      if (error.response?.data?.message?.includes('can only mark attendance for yourself')) {
+        toast.error('You can only mark attendance using your registered name. Please use your correct name.');
+      } else {
+        toast.error(error.response?.data?.message || "Failed to submit attendance. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -67,7 +71,7 @@ const StudentPage = () => {
   const mockLectures: LectureData[] = [
     // Monday
     {
-      id: '1',
+      _id: '1',
       subject: 'IPCV',
       professor: 'Dr. Sarah Parker',
       time: '9:00 AM - 10:00 AM',
@@ -77,7 +81,7 @@ const StudentPage = () => {
       year: 'BE'
     },
     {
-      id: '2',
+      _id: '2',
       subject: 'FSD',
       professor: 'Prof. James Wilson',
       time: '10:00 AM - 11:00 AM',
@@ -87,7 +91,7 @@ const StudentPage = () => {
       year: 'BE'
     },
     {
-      id: '3',
+      _id: '3',
       subject: 'BDA',
       professor: 'Dr. Michael Chen',
       time: '11:00 AM - 12:00 PM',
@@ -98,38 +102,38 @@ const StudentPage = () => {
     },
     // Tuesday
     {
-      id: '4',
+      _id: '4',
       subject: 'ML',
       professor: 'Dr. Emily Brooks',
       time: '9:00 AM - 10:00 AM',
       day: 'Tuesday',
       room: '304',
-      division: 'I4',
+      division: 'I1',
       year: 'BE'
     },
     {
-      id: '5',
+      _id: '5',
       subject: 'SE',
       professor: 'Prof. Robert Taylor',
       time: '10:00 AM - 11:00 AM',
       day: 'Tuesday',
       room: '305',
-      division: 'I5',
+      division: 'I1',
       year: 'BE'
     },
     {
-      id: '6',
+      _id: '6',
       subject: 'Honours',
       professor: 'Dr. Lisa Anderson',
       time: '2:00 PM - 3:00 PM',
       day: 'Tuesday',
       room: '306',
-      division: 'I6',
+      division: 'I1',
       year: 'BE'
     },
     // Wednesday
     {
-      id: '7',
+      _id: '7',
       subject: 'BDA',
       professor: 'Dr. Michael Chen',
       time: '9:00 AM - 10:00 AM',
@@ -139,7 +143,7 @@ const StudentPage = () => {
       year: 'BE'
     },
     {
-      id: '8',
+      _id: '8',
       subject: 'IPCV',
       professor: 'Dr. Sarah Parker',
       time: '11:00 AM - 12:00 PM',
@@ -149,7 +153,7 @@ const StudentPage = () => {
       year: 'BE'
     },
     {
-      id: '9',
+      _id: '9',
       subject: 'Minors',
       professor: 'Prof. David Kumar',
       time: '2:00 PM - 3:00 PM',
@@ -160,38 +164,38 @@ const StudentPage = () => {
     },
     // Thursday
     {
-      id: '10',
+      _id: '10',
       subject: 'ML',
       professor: 'Dr. Emily Brooks',
       time: '10:00 AM - 11:00 AM',
       day: 'Thursday',
       room: '304',
-      division: 'I4',
+      division: 'I1',
       year: 'BE'
     },
     {
-      id: '11',
+      _id: '11',
       subject: 'FSD',
       professor: 'Prof. James Wilson',
       time: '11:00 AM - 12:00 PM',
       day: 'Thursday',
       room: '302',
-      division: 'I5',
+      division: 'I2',
       year: 'BE'
     },
     {
-      id: '12',
+      _id: '12',
       subject: 'Honours',
       professor: 'Dr. Lisa Anderson',
       time: '3:00 PM - 4:00 PM',
       day: 'Thursday',
       room: '306',
-      division: 'I6',
+      division: 'I3',
       year: 'BE'
     },
     // Friday
     {
-      id: '13',
+      _id: '13',
       subject: 'SE',
       professor: 'Prof. Robert Taylor',
       time: '9:00 AM - 10:00 AM',
@@ -201,7 +205,7 @@ const StudentPage = () => {
       year: 'BE'
     },
     {
-      id: '14',
+      _id: '14',
       subject: 'Minors',
       professor: 'Prof. David Kumar',
       time: '1:00 PM - 2:00 PM',
@@ -211,7 +215,7 @@ const StudentPage = () => {
       year: 'BE'
     },
     {
-      id: '15',
+      _id: '15',
       subject: 'FSD',
       professor: 'Prof. James Wilson',
       time: '3:00 PM - 4:00 PM',
@@ -225,9 +229,14 @@ const StudentPage = () => {
   return (
     <MainLayout>
       <div className="max-w-[1400px] mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center text-attendify-primary">
-          Student Attendance Portal
-        </h1>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-attendify-primary">
+            Student Attendance Portal
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            DJSCE IT
+          </p>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-8">
           <div className="bg-white rounded-lg shadow-md p-6 lg:sticky lg:top-4">

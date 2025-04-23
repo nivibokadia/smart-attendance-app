@@ -8,17 +8,28 @@ export interface Student {
   reason: string;
 }
 
-export interface Attendance extends Student {
+export interface Attendance {
+  _id: string;
+  studentId: string;
+  name: string;
+  sapId: string;
+  rollNo: string;
+  division: string;
+  year: string;
   subject: string;
   lectureTime: string;
   date: Date;
-  id?: string;
+  weekday: string;
   status: 'present' | 'absent';
-  weekday?: string;
+  committee?: string;
+  reason?: string;
+  severity?: 'low' | 'medium' | 'high';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface LectureData {
-  id: string;
+  _id: string;
   subject: string;
   time: string;
   day: string;
@@ -26,6 +37,8 @@ export interface LectureData {
   professor: string;
   division: string;
   year: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface GroupedAttendance {

@@ -14,7 +14,10 @@ const PORT = 3000; // Changed to port 3000 to avoid conflicts
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: [
+    'http://localhost:5173', // Local development
+    'https://smart-attendance-app.vercel.app' // Your Vercel frontend URL
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
