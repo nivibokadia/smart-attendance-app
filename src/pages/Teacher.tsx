@@ -5,12 +5,14 @@ import { teacherApi } from '@/services/api';
 import { Attendance } from '@/types';
 import FilterControls from '@/components/teacher/FilterControls';
 import AttendanceTable from '@/components/teacher/AttendanceTable';
+import SubjectAttendanceGrid from '@/components/teacher/SubjectAttendanceGrid';
 import { exportToExcel } from '@/utils/excelExport';
 
 const TeacherPage = () => {
   const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'table' | 'grid'>('table');
 
   const fetchAttendance = async (filters?: {
     date?: Date;
@@ -38,7 +40,27 @@ const TeacherPage = () => {
           lectureTime: group.lectureTime
         }))
       );
-      setAttendanceData(flattenedData);
+      
+      // Sort the data by roll number in ascending order
+      const sortedData = flattenedData.sort((a, b) => {
+        // Extract numeric part from roll numbers (handles cases like "I1-001")
+        const getNumericPart = (rollNo: string) => {
+          const match = rollNo.match(/\d+/);
+          return match ? parseInt(match[0]) : 0;
+        };
+        
+        const rollNoA = getNumericPart(a.rollNo);
+        const rollNoB = getNumericPart(b.rollNo);
+        
+        // If numeric parts are equal, sort by the full roll number string
+        if (rollNoA === rollNoB) {
+          return a.rollNo.localeCompare(b.rollNo);
+        }
+        
+        return rollNoA - rollNoB;
+      });
+      
+      setAttendanceData(sortedData);
     } catch (error) {
       toast.error('Failed to fetch attendance data');
       console.error('Error fetching attendance:', error);
@@ -112,15 +134,43 @@ const TeacherPage = () => {
             ))}
           </div>
 
-          {/* Filters */}
-          <FilterControls onFilter={handleFilter} />
+          {/* Tab Navigation */}
+          <div className="flex space-x-4 mb-6">
+            <button
+              onClick={() => setActiveTab('table')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                activeTab === 'table'
+                  ? 'bg-attendify-primary text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Attendance Table
+            </button>
+            <button
+              onClick={() => setActiveTab('grid')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                activeTab === 'grid'
+                  ? 'bg-attendify-primary text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Subject-wise View
+            </button>
+          </div>
 
-          {/* Attendance Table */}
-          <AttendanceTable
-            attendanceData={attendanceData}
-            onExport={handleExport}
-            isLoading={isLoading}
-          />
+          {/* Content based on active tab */}
+          {activeTab === 'table' ? (
+            <>
+              <FilterControls onFilter={handleFilter} />
+              <AttendanceTable
+                attendanceData={attendanceData}
+                onExport={handleExport}
+                isLoading={isLoading}
+              />
+            </>
+          ) : (
+            <SubjectAttendanceGrid />
+          )}
         </div>
       </div>
     </MainLayout>

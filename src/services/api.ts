@@ -156,6 +156,15 @@ export const teacherApi = {
       throw error;
     }
   },
+
+  getSubjectAttendance: async () => {
+    try {
+      const response = await api.get('/teacher/subject-attendance');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default api; 

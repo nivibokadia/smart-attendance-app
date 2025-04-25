@@ -150,4 +150,49 @@ export const downloadAttendance = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(400).json({ message: 'Error generating attendance report' });
   }
+};
+
+// @desc    Get subject-wise attendance
+// @route   GET /api/teacher/subject-attendance
+// @access  Private (Teacher)
+export const getSubjectAttendance = async (req: Request, res: Response) => {
+  try {
+    // Get all unique subjects
+    const subjects = await Attendance.distinct('subject');
+
+    // For each subject, get the attendance records
+    const subjectAttendance = await Promise.all(
+      subjects.map(async (subject) => {
+        const attendance = await Attendance.find({ 
+          subject,
+          status: 'present' // Only count present attendance
+        }).sort({ rollNo: 1 });
+
+        // Group by student and count attendance
+        const studentAttendance = attendance.reduce((acc: any, record) => {
+          const key = `${record.rollNo}-${record.name}`;
+          if (!acc[key]) {
+            acc[key] = {
+              rollNo: record.rollNo,
+              name: record.name,
+              sapId: record.sapId,
+              attendanceCount: 0
+            };
+          }
+          acc[key].attendanceCount++;
+          return acc;
+        }, {});
+
+        return {
+          subject,
+          students: Object.values(studentAttendance)
+        };
+      })
+    );
+
+    res.json(subjectAttendance);
+  } catch (error) {
+    console.error('Error in getSubjectAttendance:', error);
+    res.status(400).json({ message: 'Error fetching subject attendance' });
+  }
 }; 
