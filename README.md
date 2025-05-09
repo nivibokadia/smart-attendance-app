@@ -42,5 +42,3 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-Simply open [Lovable](https://lovable.dev/projects/964b484f-6749-4705-bd99-b9e515e272dd) and click on Share -> Publish.
-
