@@ -5,6 +5,7 @@ import { teacherApi } from '@/services/api';
 import { Attendance } from '@/types';
 import FilterControls from '@/components/teacher/FilterControls';
 import AttendanceTable from '@/components/teacher/AttendanceTable';
+import SubjectAttendanceGrid from '@/components/teacher/SubjectAttendanceGrid';
 import { exportToExcel } from '@/utils/excelExport';
 import { Card } from '@/components/ui/card';
 
@@ -18,6 +19,7 @@ const TeacherPage = () => {
   const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
   const [reasonStats, setReasonStats] = useState<ReasonStat[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [stats, setStats] = useState<any[]>([]);
 
   const fetchData = async (filters?: {
     date?: Date;
@@ -48,9 +50,7 @@ const TeacherPage = () => {
           lectureTime: group.lectureTime
         }))
       );
-      
       setAttendanceData(flattenedData);
-      setReasonStats(statsData);
     } catch (error) {
       toast.error('Failed to fetch data');
       console.error('Error fetching data:', error);
@@ -125,12 +125,6 @@ const TeacherPage = () => {
             )}
           </Card>
         </div>
-
-        <AttendanceTable 
-          attendanceData={attendanceData}
-          onExport={handleExport}
-          isLoading={isLoading}
-        />
       </div>
     </MainLayout>
   );
