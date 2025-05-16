@@ -6,13 +6,20 @@ import { Attendance } from '@/types';
 import FilterControls from '@/components/teacher/FilterControls';
 import AttendanceTable from '@/components/teacher/AttendanceTable';
 import { exportToExcel } from '@/utils/excelExport';
+import { Card } from '@/components/ui/card';
+
+interface ReasonStat {
+  reason: string;
+  count: number;
+  uniqueStudents: number;
+}
 
 const TeacherPage = () => {
   const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
+  const [reasonStats, setReasonStats] = useState<ReasonStat[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [stats, setStats] = useState<any[]>([]);
 
-  const fetchAttendance = async (filters?: {
+  const fetchData = async (filters?: {
     date?: Date;
     subject?: string;
     division?: string;
@@ -29,45 +36,27 @@ const TeacherPage = () => {
       if (filters?.division) params.division = filters.division;
       if (filters?.year) params.year = filters.year;
 
-      const data = await teacherApi.getAttendance(params);
-      // Flatten the grouped data to get individual records
-      const flattenedData = data.flatMap((group: any) => 
+      const [attendanceData, statsData] = await Promise.all([
+        teacherApi.getAttendance(params),
+        teacherApi.getReasonStats(params)
+      ]);
+
+      const flattenedData = attendanceData.flatMap((group: any) => 
         group.students.map((student: any) => ({
           ...student,
           subject: group.subject,
           lectureTime: group.lectureTime
         }))
       );
+      
       setAttendanceData(flattenedData);
+      setReasonStats(statsData);
     } catch (error) {
-      toast.error('Failed to fetch attendance data');
-      console.error('Error fetching attendance:', error);
+      toast.error('Failed to fetch data');
+      console.error('Error fetching data:', error);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const fetchStats = async () => {
-    try {
-      const data = await teacherApi.getAttendanceStats();
-      setStats(data);
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchAttendance();
-    fetchStats();
-  }, []);
-
-  const handleFilter = (filters: {
-    date?: Date;
-    subject?: string;
-    division?: string;
-    year?: string;
-  }) => {
-    fetchAttendance(filters);
   };
 
   const handleExport = (data: Attendance[]) => {
@@ -79,49 +68,69 @@ const TeacherPage = () => {
     toast.success('Attendance data exported successfully');
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <MainLayout>
-      <div className="max-w-[1400px] mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
+      <div className="max-w-[1400px] mx-auto px-4 py-8">
+        <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-attendify-primary">
             Teacher Dashboard
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 mt-1">
             DJSCE IT
           </p>
         </div>
 
-        <div className="space-y-8">
-          {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg shadow-md p-6"
-              >
-                <h3 className="text-lg font-semibold mb-2">
-                  {stat.subject} - {stat.division}
-                </h3>
-                <div className="text-3xl font-bold text-attendify-primary">
-                  {stat.totalAttendance}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <FilterControls onFilterChange={fetchData} />
+          
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Attendance by Reason</h2>
+            {isLoading ? (
+              <div className="animate-pulse space-y-4">
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-10 bg-gray-200 rounded"></div>
+                  ))}
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
-                  Total Entries
-                </p>
               </div>
-            ))}
-          </div>
-
-          {/* Filters */}
-          <FilterControls onFilter={handleFilter} />
-
-          {/* Attendance Table */}
-          <AttendanceTable
-            attendanceData={attendanceData}
-            onExport={handleExport}
-            isLoading={isLoading}
-          />
+            ) : (
+              <div className="space-y-4">
+                {reasonStats.map((stat) => (
+                  <div key={stat.reason} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-gray-900">
+                        {stat.reason || 'No Reason'}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {stat.uniqueStudents} unique student{stat.uniqueStudents !== 1 ? 's' : ''}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-attendify-primary">
+                        {stat.count}
+                      </p>
+                      <p className="text-sm text-gray-500">total entries</p>
+                    </div>
+                  </div>
+                ))}
+                {reasonStats.length === 0 && (
+                  <p className="text-gray-500 text-center py-4">No attendance records found</p>
+                )}
+              </div>
+            )}
+          </Card>
         </div>
+
+        <AttendanceTable 
+          attendanceData={attendanceData}
+          onExport={handleExport}
+          isLoading={isLoading}
+        />
       </div>
     </MainLayout>
   );

@@ -7,64 +7,75 @@ interface TimeTableViewProps {
   onLectureSelect: (lecture: LectureData) => void;
 }
 
-const TimeTableView = ({ lectures, selectedLectures, onLectureSelect }: TimeTableViewProps) => {
-  // Group lectures by date
-  const lecturesByDate = lectures.reduce((acc, lecture) => {
-    if (!acc[lecture.date]) {
-      acc[lecture.date] = [];
+const TimeTableView: React.FC<TimeTableViewProps> = ({ lectures, selectedLectures, onLectureSelect }) => {
+  const selectedIds = new Set(selectedLectures.map(l => l._id));
+
+  // Group lectures by day
+  const lecturesByDay = lectures.reduce((acc, lecture) => {
+    const day = lecture.day.toLowerCase();
+    if (!acc[day]) {
+      acc[day] = [];
     }
-    acc[lecture.date].push(lecture);
+    acc[day].push(lecture);
     return acc;
   }, {} as Record<string, LectureData[]>);
 
+  // Sort lectures by time within each day
+  Object.keys(lecturesByDay).forEach(day => {
+    lecturesByDay[day].sort((a, b) => {
+      const timeA = a.time.split(' - ')[0];
+      const timeB = b.time.split(' - ')[0];
+      return timeA.localeCompare(timeB);
+    });
+  });
+
+  // Define all days of the week
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4">Time Table</h2>
-      <div className="space-y-6">
-        {Object.entries(lecturesByDate).map(([date, dateLectures]) => (
-          <div key={date} className="border rounded-lg p-4">
-            <h3 className="text-lg font-medium mb-3">
-              {new Date(date).toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </h3>
-            <div className="grid gap-4">
-              {dateLectures.map((lecture) => (
-                <div
-                  key={lecture._id}
-                  className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                    selectedLectures.some(l => l._id === lecture._id)
-                      ? 'bg-attendify-primary/10 border-attendify-primary'
-                      : 'hover:bg-gray-50'
-                  }`}
-                  onClick={() => onLectureSelect(lecture)}
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-medium">{lecture.subject}</h4>
-                      <p className="text-sm text-gray-600">{lecture.professor}</p>
+    <div className="overflow-x-auto">
+      <div className="min-w-full inline-block align-middle">
+        <div className="overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                {days.map(day => (
+                  <th
+                    key={day}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {day.charAt(0).toUpperCase() + day.slice(1)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              <tr>
+                {days.map(day => (
+                  <td key={day} className="px-6 py-4 whitespace-nowrap">
+                    <div className="space-y-2">
+                      {lecturesByDay[day]?.map(lecture => (
+                        <div
+                          key={lecture._id}
+                          className={`p-2 rounded cursor-pointer ${
+                            selectedIds.has(lecture._id)
+                              ? 'bg-attendify-primary/10 border border-attendify-primary'
+                              : 'hover:bg-gray-50'
+                          }`}
+                          onClick={() => onLectureSelect(lecture)}
+                        >
+                          <div className="font-medium">{lecture.subject}</div>
+                          <div className="text-sm text-gray-600">{lecture.professor}</div>
+                          <div className="text-xs text-gray-500">{lecture.room}</div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">{lecture.time}</p>
-                      <p className="text-xs text-gray-500">{lecture.room}</p>
-                    </div>
-                  </div>
-                  <div className="mt-2 flex gap-2">
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                      {lecture.division}
-                    </span>
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                      {lecture.year}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -138,13 +138,15 @@ export const teacherApi = {
     year?: string;
     lectureTime?: string;
   }) => {
-    try {
-      const response = await api.get('/teacher/attendance', { params: filters });
-      return response.data;
-    } catch (error) {
-      console.error('Get Teacher Attendance Error:', error);
-      throw error;
-    }
+    const params = new URLSearchParams();
+    if (filters?.date) params.append('date', filters.date.toISOString().split('T')[0]);
+    if (filters?.subject) params.append('subject', filters.subject);
+    if (filters?.division) params.append('division', filters.division);
+    if (filters?.year) params.append('year', filters.year);
+    if (filters?.lectureTime) params.append('lectureTime', filters.lectureTime);
+
+    const response = await api.get(`/teacher/attendance?${params.toString()}`);
+    return response.data;
   },
 
   getAttendanceStats: async () => {
@@ -156,6 +158,22 @@ export const teacherApi = {
       throw error;
     }
   },
+
+  getReasonStats: async (filters?: {
+    date?: Date;
+    subject?: string;
+    division?: string;
+    year?: string;
+  }) => {
+    const params = new URLSearchParams();
+    if (filters?.date) params.append('date', filters.date.toISOString().split('T')[0]);
+    if (filters?.subject) params.append('subject', filters.subject);
+    if (filters?.division) params.append('division', filters.division);
+    if (filters?.year) params.append('year', filters.year);
+
+    const response = await api.get(`/teacher/attendance/reason-stats?${params.toString()}`);
+    return response.data;
+  }
 };
 
 export default api; 

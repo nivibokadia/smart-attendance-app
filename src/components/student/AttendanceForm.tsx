@@ -101,12 +101,17 @@ const AttendanceForm = ({ selectedLectures, onSubmit, isSubmitting }: Attendance
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Reason
             </label>
-            <input
-              type="text"
+            <select
               {...register('reason')}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-attendify-primary/20"
-              placeholder="Reason (optional)"
-            />
+            >
+              <option value="">Select Reason (optional)</option>
+              <option value="hackathon">Hackathon</option>
+              <option value="committee work">Committee Work</option>
+              <option value="sports">Sports</option>
+              <option value="Cultural">Cultural</option>
+              <option value="others">Others</option>
+            </select>
           </div>
         </div>
 

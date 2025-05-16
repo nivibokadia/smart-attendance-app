@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import FilterControls from '@/components/teacher/FilterControls';
 import AttendanceTable from '@/components/teacher/AttendanceTable';
 import { exportToExcel } from '@/utils/excelExport';
+import StudentCalendarView from '@/components/student/StudentCalendarView';
 
 const StudentPage = () => {
   const navigate = useNavigate();
@@ -66,9 +67,9 @@ const StudentPage = () => {
 
       await Promise.all(selectedLectures.map(lecture => 
         studentApi.markAttendance({
-          ...data,
-          subject: lecture.subject,
-          lectureTime: lecture.time,
+        ...data,
+        subject: lecture.subject,
+        lectureTime: lecture.time,
           division: lecture.division,
           year: lecture.year,
           // Use stored user data if available
@@ -77,7 +78,7 @@ const StudentPage = () => {
           rollNo: userRollNo || data.rollNo
         })
       ));
-      
+    
       toast.success("Attendance submitted successfully!");
       setSelectedLectures([]);
     } catch (error: any) {
@@ -116,195 +117,50 @@ const StudentPage = () => {
     }
   };
 
-  // Mock lectures data
+  // Mock lectures data (updated, now includes Saturday)
   const mockLectures: LectureData[] = [
     // Monday
-    {
-      _id: '1',
-      subject: 'IPCV',
-      professor: 'Dr. Sarah Parker',
-      time: '9:00 AM - 10:00 AM',
-      date: '2025-04-25',
-      room: '301',
-      division: 'I1',
-      year: 'BE'
-    },
-    {
-      _id: '2',
-      subject: 'FSD',
-      professor: 'Prof. James Wilson',
-      time: '10:00 AM - 11:00 AM',
-      date: '2025-04-25',
-      room: '302',
-      division: 'I2',
-      year: 'BE'
-    },
-    {
-      _id: '3',
-      subject: 'BDA',
-      professor: 'Dr. Michael Chen',
-      time: '11:00 AM - 12:00 PM',
-      date: '2025-04-25',
-      room: '303',
-      division: 'I3',
-      year: 'BE'
-    },
+    { _id: '1', subject: 'ipcv', professor: 'Prof. A', time: '9:00 AM', day: 'Monday', room: '101', division: 'I1', year: 'BE', date: '' },
+    { _id: '2', subject: 'bda', professor: 'Prof. B', time: '10:00 AM', day: 'Monday', room: '102', division: 'I1', year: 'BE', date: '' },
+    { _id: '3', subject: 'ml', professor: 'Prof. C', time: '11:00 AM', day: 'Monday', room: '103', division: 'I1', year: 'BE', date: '' },
+    { _id: '4', subject: 'fsd', professor: 'Prof. D', time: '12:00 PM', day: 'Monday', room: '104', division: 'I1', year: 'BE', date: '' },
+    { _id: '5', subject: 'se', professor: 'Prof. E', time: '1:00 PM', day: 'Monday', room: '105', division: 'I1', year: 'BE', date: '' },
+    { _id: '6', subject: 'is', professor: 'Prof. F', time: '2:00 PM', day: 'Monday', room: '106', division: 'I1', year: 'BE', date: '' },
     // Tuesday
-    {
-      _id: '4',
-      subject: 'ML',
-      professor: 'Dr. Emily Brooks',
-      time: '9:00 AM - 10:00 AM',
-      date: '2025-04-26',
-      room: '304',
-      division: 'I1',
-      year: 'BE'
-    },
-    {
-      _id: '5',
-      subject: 'SE',
-      professor: 'Prof. Robert Taylor',
-      time: '10:00 AM - 11:00 AM',
-      date: '2025-04-26',
-      room: '305',
-      division: 'I1',
-      year: 'BE'
-    },
-    {
-      _id: '6',
-      subject: 'Honours',
-      professor: 'Dr. Lisa Anderson',
-      time: '2:00 PM - 3:00 PM',
-      date: '2025-04-26',
-      room: '306',
-      division: 'I1',
-      year: 'BE'
-    },
+    { _id: '7', subject: 'bda', professor: 'Prof. B', time: '9:00 AM', day: 'Tuesday', room: '102', division: 'I1', year: 'BE', date: '' },
+    { _id: '8', subject: 'ml', professor: 'Prof. C', time: '10:00 AM', day: 'Tuesday', room: '103', division: 'I1', year: 'BE', date: '' },
+    { _id: '9', subject: 'fsd', professor: 'Prof. D', time: '11:00 AM', day: 'Tuesday', room: '104', division: 'I1', year: 'BE', date: '' },
+    { _id: '10', subject: 'se', professor: 'Prof. E', time: '12:00 PM', day: 'Tuesday', room: '105', division: 'I1', year: 'BE', date: '' },
+    { _id: '11', subject: 'is', professor: 'Prof. F', time: '1:00 PM', day: 'Tuesday', room: '106', division: 'I1', year: 'BE', date: '' },
+    { _id: '12', subject: 'ipcv', professor: 'Prof. A', time: '2:00 PM', day: 'Tuesday', room: '101', division: 'I1', year: 'BE', date: '' },
     // Wednesday
-    {
-      _id: '7',
-      subject: 'BDA',
-      professor: 'Dr. Michael Chen',
-      time: '9:00 AM - 10:00 AM',
-      date: '2025-04-27',
-      room: '303',
-      division: 'I1',
-      year: 'BE'
-    },
-    {
-      _id: '8',
-      subject: 'IPCV',
-      professor: 'Dr. Sarah Parker',
-      time: '11:00 AM - 12:00 PM',
-      date: '2025-04-27',
-      room: '301',
-      division: 'I2',
-      year: 'BE'
-    },
-    {
-      _id: '9',
-      subject: 'Minors',
-      professor: 'Prof. David Kumar',
-      time: '2:00 PM - 3:00 PM',
-      date: '2025-04-27',
-      room: '307',
-      division: 'I3',
-      year: 'BE'
-    },
+    { _id: '13', subject: 'ml', professor: 'Prof. C', time: '9:00 AM', day: 'Wednesday', room: '103', division: 'I1', year: 'BE', date: '' },
+    { _id: '14', subject: 'fsd', professor: 'Prof. D', time: '10:00 AM', day: 'Wednesday', room: '104', division: 'I1', year: 'BE', date: '' },
+    { _id: '15', subject: 'se', professor: 'Prof. E', time: '11:00 AM', day: 'Wednesday', room: '105', division: 'I1', year: 'BE', date: '' },
+    { _id: '16', subject: 'is', professor: 'Prof. F', time: '12:00 PM', day: 'Wednesday', room: '106', division: 'I1', year: 'BE', date: '' },
+    { _id: '17', subject: 'ipcv', professor: 'Prof. A', time: '1:00 PM', day: 'Wednesday', room: '101', division: 'I1', year: 'BE', date: '' },
+    { _id: '18', subject: 'bda', professor: 'Prof. B', time: '2:00 PM', day: 'Wednesday', room: '102', division: 'I1', year: 'BE', date: '' },
     // Thursday
-    {
-      _id: '10',
-      subject: 'ML',
-      professor: 'Dr. Emily Brooks',
-      time: '10:00 AM - 11:00 AM',
-      date: '2025-04-28',
-      room: '304',
-      division: 'I1',
-      year: 'BE'
-    },
-    {
-      _id: '11',
-      subject: 'FSD',
-      professor: 'Prof. James Wilson',
-      time: '11:00 AM - 12:00 PM',
-      date: '2025-04-28',
-      room: '302',
-      division: 'I2',
-      year: 'BE'
-    },
-    {
-      _id: '12',
-      subject: 'Honours',
-      professor: 'Dr. Lisa Anderson',
-      time: '3:00 PM - 4:00 PM',
-      date: '2025-04-28',
-      room: '306',
-      division: 'I3',
-      year: 'BE'
-    },
+    { _id: '19', subject: 'fsd', professor: 'Prof. D', time: '9:00 AM', day: 'Thursday', room: '104', division: 'I1', year: 'BE', date: '' },
+    { _id: '20', subject: 'se', professor: 'Prof. E', time: '10:00 AM', day: 'Thursday', room: '105', division: 'I1', year: 'BE', date: '' },
+    { _id: '21', subject: 'is', professor: 'Prof. F', time: '11:00 AM', day: 'Thursday', room: '106', division: 'I1', year: 'BE', date: '' },
+    { _id: '22', subject: 'ipcv', professor: 'Prof. A', time: '12:00 PM', day: 'Thursday', room: '101', division: 'I1', year: 'BE', date: '' },
+    { _id: '23', subject: 'bda', professor: 'Prof. B', time: '1:00 PM', day: 'Thursday', room: '102', division: 'I1', year: 'BE', date: '' },
+    { _id: '24', subject: 'ml', professor: 'Prof. C', time: '2:00 PM', day: 'Thursday', room: '103', division: 'I1', year: 'BE', date: '' },
     // Friday
-    {
-      _id: '13',
-      subject: 'SE',
-      professor: 'Prof. Robert Taylor',
-      time: '9:00 AM - 10:00 AM',
-      date: '2025-04-29',
-      room: '305',
-      division: 'I1',
-      year: 'BE'
-    },
-    {
-      _id: '14',
-      subject: 'Minors',
-      professor: 'Prof. David Kumar',
-      time: '1:00 PM - 2:00 PM',
-      date: '2025-04-29',
-      room: '307',
-      division: 'I2',
-      year: 'BE'
-    },
-    {
-      _id: '15',
-      subject: 'FSD',
-      professor: 'Prof. James Wilson',
-      time: '3:00 PM - 4:00 PM',
-      date: '2025-04-29',
-      room: '302',
-      division: 'I3',
-      year: 'BE'
-    },
+    { _id: '25', subject: 'se', professor: 'Prof. E', time: '9:00 AM', day: 'Friday', room: '105', division: 'I1', year: 'BE', date: '' },
+    { _id: '26', subject: 'is', professor: 'Prof. F', time: '10:00 AM', day: 'Friday', room: '106', division: 'I1', year: 'BE', date: '' },
+    { _id: '27', subject: 'ipcv', professor: 'Prof. A', time: '11:00 AM', day: 'Friday', room: '101', division: 'I1', year: 'BE', date: '' },
+    { _id: '28', subject: 'bda', professor: 'Prof. B', time: '12:00 PM', day: 'Friday', room: '102', division: 'I1', year: 'BE', date: '' },
+    { _id: '29', subject: 'ml', professor: 'Prof. C', time: '1:00 PM', day: 'Friday', room: '103', division: 'I1', year: 'BE', date: '' },
+    { _id: '30', subject: 'fsd', professor: 'Prof. D', time: '2:00 PM', day: 'Friday', room: '104', division: 'I1', year: 'BE', date: '' },
     // Saturday
-    {
-      _id: '16',
-      subject: 'IPCV',
-      professor: 'Dr. Sarah Parker',
-      time: '9:00 AM - 10:00 AM',
-      date: '2025-04-30',
-      room: '301',
-      division: 'I1',
-      year: 'BE'
-    },
-    {
-      _id: '17',
-      subject: 'ML',
-      professor: 'Dr. Emily Brooks',
-      time: '11:00 AM - 12:00 PM',
-      date: '2025-04-30',
-      room: '304',
-      division: 'I2',
-      year: 'BE'
-    },
-    // Sunday
-    {
-      _id: '18',
-      subject: 'BDA',
-      professor: 'Dr. Michael Chen',
-      time: '2:00 PM - 3:00 PM',
-      date: '2025-05-01',
-      room: '303',
-      division: 'I1',
-      year: 'BE'
-    }
+    { _id: '31', subject: 'is', professor: 'Prof. F', time: '9:00 AM', day: 'Saturday', room: '106', division: 'I1', year: 'BE', date: '' },
+    { _id: '32', subject: 'ipcv', professor: 'Prof. A', time: '10:00 AM', day: 'Saturday', room: '101', division: 'I1', year: 'BE', date: '' },
+    { _id: '33', subject: 'bda', professor: 'Prof. B', time: '11:00 AM', day: 'Saturday', room: '102', division: 'I1', year: 'BE', date: '' },
+    { _id: '34', subject: 'ml', professor: 'Prof. C', time: '12:00 PM', day: 'Saturday', room: '103', division: 'I1', year: 'BE', date: '' },
+    { _id: '35', subject: 'fsd', professor: 'Prof. D', time: '1:00 PM', day: 'Saturday', room: '104', division: 'I1', year: 'BE', date: '' },
+    { _id: '36', subject: 'se', professor: 'Prof. E', time: '2:00 PM', day: 'Saturday', room: '105', division: 'I1', year: 'BE', date: '' },
   ];
 
   return (
@@ -312,8 +168,8 @@ const StudentPage = () => {
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-attendify-primary">
-            Student Attendance Portal
-          </h1>
+          Student Attendance Portal
+        </h1>
           <p className="text-sm text-gray-500 mt-1">
             DJSCE IT
           </p>
@@ -321,18 +177,18 @@ const StudentPage = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-8">
           <div className="bg-white rounded-lg shadow-md p-6 lg:sticky lg:top-4">
-            <AttendanceForm 
-              selectedLectures={selectedLectures}
-              onSubmit={handleSubmitAttendance}
+        <AttendanceForm 
+          selectedLectures={selectedLectures}
+          onSubmit={handleSubmitAttendance}
               isSubmitting={isSubmitting}
-            />
+        />
           </div>
 
-          <TimeTableView 
+        <StudentCalendarView 
             lectures={mockLectures}
             selectedLectures={selectedLectures}
             onLectureSelect={handleSelectLecture} 
-          />
+        />
         </div>
       </div>
     </MainLayout>

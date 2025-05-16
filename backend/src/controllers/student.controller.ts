@@ -14,12 +14,12 @@ export const markAttendance = async (req: AuthRequest, res: Response) => {
     console.log('Received attendance data:', req.body);
     console.log('Authenticated user:', req.user);
     
-    const { subject, lectureTime, name, sapId, rollNo, division, year } = req.body;
+    const { subject, lectureTime, name, sapId, rollNo, division, year, reason } = req.body;
     
     // Validate required fields
     const requiredFields = ['subject', 'lectureTime', 'name', 'sapId', 'rollNo', 'division', 'year'];
     const missingFields = requiredFields.filter(field => !req.body[field]);
-    
+
     if (missingFields.length > 0) {
       return res.status(400).json({ 
         message: 'Missing required fields',
@@ -62,7 +62,8 @@ export const markAttendance = async (req: AuthRequest, res: Response) => {
       sapId: req.user.studentId,
       rollNo,
       division,
-      year
+      year,
+      reason
     });
 
     console.log('Created attendance:', attendance);

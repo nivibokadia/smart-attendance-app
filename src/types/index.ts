@@ -22,7 +22,7 @@ export interface Attendance {
   weekday: string;
   status: 'present' | 'absent';
   committee?: string;
-  reason?: string;
+  reason?: 'hackathon' | 'committee work' | 'others';
   severity?: 'low' | 'medium' | 'high';
   createdAt?: string;
   updatedAt?: string;
@@ -37,6 +37,7 @@ export interface LectureData {
   room: string;
   division: string;
   year: string;
+  day?: string;
   createdAt?: string;
   updatedAt?: string;
 }

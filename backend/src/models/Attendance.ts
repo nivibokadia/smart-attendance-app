@@ -12,6 +12,7 @@ export interface IAttendance extends Document {
   date: Date;
   weekday: string;
   status: 'present' | 'absent';
+  reason: string;
 }
 
 const attendanceSchema = new Schema({
@@ -61,6 +62,11 @@ const attendanceSchema = new Schema({
     type: String,
     enum: ['present', 'absent'],
     default: 'present'
+  },
+  reason: {
+    type: String,
+    enum: ['hackathon', 'committee work', 'others'],
+    required: false
   }
 }, {
   timestamps: true

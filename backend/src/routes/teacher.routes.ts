@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAttendance, getAttendanceStats } from '../controllers/teacher.controller';
+import { getAttendance, getAttendanceStats, getReasonStats } from '../controllers/teacher.controller';
 import { protect, authorize } from '../middleware/auth.middleware';
 
 const router = express.Router();
@@ -10,5 +10,6 @@ router.use(authorize('teacher'));
 
 router.get('/attendance', getAttendance);
 router.get('/attendance/stats', getAttendanceStats);
+router.get('/attendance/reason-stats', getReasonStats);
 
 export default router; 

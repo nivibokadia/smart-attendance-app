@@ -64,7 +64,7 @@ const AttendanceTable = ({ attendanceData, onExport, isLoading }: AttendanceTabl
           </thead>
           <tbody>
             {currentItems.map((record) => (
-              <tr key={record.id} className="border-b hover:bg-gray-50">
+              <tr key={record._id} className="border-b hover:bg-gray-50">
                 <td className="border px-4 py-2">{record.rollNo}</td>
                 <td className="border px-4 py-2">{record.name}</td>
                 <td className="border px-4 py-2">{record.sapId}</td>
@@ -72,7 +72,9 @@ const AttendanceTable = ({ attendanceData, onExport, isLoading }: AttendanceTabl
                 <td className="border px-4 py-2">{record.year}</td>
                 <td className="border px-4 py-2">{record.subject}</td>
                 <td className="border px-4 py-2">{record.lectureTime}</td>
-                <td className="border px-4 py-2">{record.weekday}</td>
+                <td className="border px-4 py-2">
+                  {record.weekday || (record.date ? new Date(record.date).toLocaleDateString('en-US', { weekday: 'long' }) : '')}
+                </td>
                 <td className="border px-4 py-2">
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     record.status === 'present' 

@@ -20,9 +20,9 @@ export const getAttendance = async (req: Request, res: Response) => {
       query.date = { $gte: startDate, $lt: endDate };
     }
     
-    if (subject) query.subject = subject;
-    if (division) query.division = division;
-    if (year) query.year = year;
+    if (subject) query.subject = { $regex: subject, $options: 'i' };
+    if (division) query.division = { $regex: division, $options: 'i' };
+    if (year) query.year = { $regex: year, $options: 'i' };
     if (lectureTime) query.lectureTime = lectureTime;
 
     const attendance = await Attendance.find(query)
@@ -48,7 +48,8 @@ export const getAttendance = async (req: Request, res: Response) => {
         subject: record.subject,
         lectureTime: record.lectureTime,
         date: record.date,
-        status: record.status
+        status: record.status,
+        reason: record.reason
       });
       return acc;
     }, {});
@@ -149,5 +150,53 @@ export const downloadAttendance = async (req: Request, res: Response) => {
     res.end();
   } catch (error) {
     res.status(400).json({ message: 'Error generating attendance report' });
+  }
+};
+
+// @desc    Get reason-based attendance statistics
+// @route   GET /api/teacher/attendance/reason-stats
+// @access  Private (Teacher)
+export const getReasonStats = async (req: Request, res: Response) => {
+  try {
+    const { date, subject, division, year } = req.query;
+    
+    const query: any = {};
+    
+    if (date) {
+      const startDate = new Date(date as string);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 1);
+      query.date = { $gte: startDate, $lt: endDate };
+    }
+    
+    if (subject) query.subject = { $regex: subject, $options: 'i' };
+    if (division) query.division = { $regex: division, $options: 'i' };
+    if (year) query.year = { $regex: year, $options: 'i' };
+
+    const stats = await Attendance.aggregate([
+      { $match: query },
+      {
+        $group: {
+          _id: '$reason',
+          count: { $sum: 1 },
+          students: { $addToSet: { name: '$name', sapId: '$sapId' } }
+        }
+      },
+      {
+        $project: {
+          reason: '$_id',
+          count: 1,
+          uniqueStudents: { $size: '$students' },
+          _id: 0
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    res.json(stats);
+  } catch (error) {
+    console.error('Error in getReasonStats:', error);
+    res.status(400).json({ message: 'Error fetching reason statistics' });
   }
 }; 
